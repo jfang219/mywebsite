@@ -3,18 +3,14 @@
   command = "hugo"
 
 [build.environment]
-  HUGO_VERSION = "0.102.2"
+  HUGO_VERSION = "0.102.3"
   HUGO_ENABLEGITINFO = "true"
 
 [context.production.environment]
   HUGO_ENV = "production"
   
 [context.branch-deploy.environment]
-  HUGO_VERSION = "0.102.2"
+  HUGO_VERSION = "0.102.3"
 
 [context.deploy-preview.environment]
-  HUGO_VERSION = "0.102.2" 
-Footer
-© 2022 GitHub, Inc.
-Footer navigation
-Terms
+  HUGO_VERSION = "0.102.3"
