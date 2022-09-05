@@ -1,31 +1,29 @@
-baseURL: http://example.org/
+baseURL: https://jingyi-fang.netlify.app/
 languageCode: en-us
-title: Forty
-theme: forty
+title: "Jingyi Fang's website""
+theme: "forty""
 googleAnalytics: ''
 disqusShortname: ''
 params:
   banner:
     buttonText: Get Started
-    subtitle: |-
-      A RESPONSIVE SITE TEMPLATE DESIGNED BY HTML5 UP
-      AND RELEASED UNDER THE CREATIVE COMMONS.
-    title: Hi, my name is Forty
+    #subtitle: Nice to meet you :)!
+    title: Hi, my name is Jingyi Fang!
   blog: {}
   contact:
     address:
-      - city: City, ST 00000
-        country: Country
-        street: Street
+      - city: London
+        country: United Kingdom
+        street: 1 Newcastle Place
         title: Address
     buttonClear: Clear
     buttonSend: Send message
     email:
-      - email: example@domain.com
-        title: Email
+      - email: jfang.mam2023@london.edu
+        title: LBSEmail
     enable: yes
     phone:
-      - phone: (000) 000-0000 x1234
+      - phone: +44 7536209233
         title: Phone
   custom_css: []
   custom_js: []
@@ -34,14 +32,14 @@ params:
     heading: Page couldn't be found
     text: Please visit [this page](/)
   favicon: favicon.ico
-  footer:
+  #footer:
     copyright: Company Name
     enable: yes
-    quicklinks:
+    #quicklinks:
       - alt: HTML5 UP
         text: 'Design: '
         url: https://www.html5up.net
-    social:
+    #social:
       - icon: fa-twitter
         label: Twitter
         url: https://www.twitter.com
@@ -50,13 +48,13 @@ params:
         url: https://www.facebook.com
       - icon: fa-instagram
         label: Instagram
-        url: https://www.instagram.com
+        url: https://instagram.com/itsfbee?r=nametag
       - icon: fa-github
         label: GitHub
-        url: https://www.github.com
+        url: https://github.com/jfang219
       - icon: fa-linkedin
         label: LinkedIn
-        url: https://www.linkedin.com
+        url: www.linkedin.com/in/fangjy
   image: ''
   name: Your name
   navigation:
