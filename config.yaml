@@ -48,7 +48,7 @@ params:
       #   url: https://www.facebook.com
       - icon: fa-instagram
         label: Instagram
-        url: https://instagram.com/itsfbee?r=nametag
+        url: https://instagram.com/itsfbee
       - icon: fa-github
         label: GitHub
         url: https://github.com/jfang219
