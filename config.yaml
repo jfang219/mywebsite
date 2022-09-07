@@ -1,7 +1,7 @@
-baseURL: "https://jingyi-fang.netlify.app/""
+baseURL: https://jingyi-fang.netlify.app/
 languageCode: en-us
-title: "Jingyi Fang's website""
-theme: "forty""
+title: "Jingyi Fang's website"
+theme: "forty"
 googleAnalytics: ''
 disqusShortname: ''
 params:
