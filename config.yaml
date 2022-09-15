@@ -77,20 +77,20 @@ params:
         title: About Me
         url: blogs/about_me
       - image: pic03.jpg
-        subtitle: Group Project 1
-        title: Homework 1
-        url: blogs/homework1
-      - image: pic04.jpgm
         subtitle: Group Project 2
         title: Homework 2
         url: blogs/homework2
-      - image: pic05.jpg
-        subtitle: 
+      - image: pic04.jpgm
+        subtitle: Resume
         title: My CV
         url: blogs/cv.pdf
+      - image: pic05.jpg
+        subtitle: 
+        title: To be added
+        url: blogs/
       - image: pic06.jpg
-        subtitle: Feugiat Amet Tempus
-        title: Etiam
+        subtitle: 
+        title: To be added
         url: blogs/ipsum
   two:
     buttonText: Get Started
