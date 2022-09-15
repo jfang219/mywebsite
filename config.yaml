@@ -71,23 +71,23 @@ params:
       - image: lbs.jpg
         subtitle: Example
         title: Risk Return
-        url: blogs/risk_return
+        url: blogs/risk_return.Rmd
       - image: pic02.jpg
         subtitle: Jingyi Fang
         title: About Me
-        url: blogs/about_me
+        url: blogs/about_me.Rmd
       - image: pic03.jpg
         subtitle: Group Project 2
         title: Homework 2
-        url: blogs/homework2
-      - image: pic04.jpg
+        url: blogs/homework2.Rmd
+      - image: pic04.jpgm
         subtitle: Group Project 3
         title: Homework 3
-        url: blogs/homework3
+        url: blogs/homework3.Rmd
       - image: pic05.jpg
-        subtitle: Ipsum Dolor Sit Amet
-        title: Consequat
-        url: blogs/ipsum
+        subtitle: 
+        title: My CV
+        url: blogs/
       - image: pic06.jpg
         subtitle: Feugiat Amet Tempus
         title: Etiam
