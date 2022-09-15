@@ -1,0 +1,49 @@
+---
+title: "about_me"
+output: html_document
+date: "2022-09-15"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1 Basic Information
+
+::: {.image style="text-align:center"}
+< img src="square.jpg" width="15%" text-align="center"/>
+:::
+
+|    Name     |  Sex  |   Birthday   |  Nationality  |
+|:-----------:|:----:|:------------:|:-----------:|
+| Jingyi Fang | Female | Feb 19, 1999 |  Chinese  |
+
+: Basic information
+
+## 2 Past Experience
+
+### 2.1 Education
+
+**London Business School**
+
+*Master of Analytics & Management *
+
+-  Relevant Courses: Applied Statistics with R, Machine Learnings for Big Data, Business Strategy Analytics;
+-   GMAT 730
+
+**King’s College London**
+
+*BSc Mathematics with Finance&Management *
+
+-   Relevant Courses: Real Analysis, Statistical Modelling, Economics, Marketing;
+-   Honors and Awards: First Class
+
+### 2.2 Business Experience
+
+-   **CSC FINANCIAL CO., LTD.** *Investment Intern*
+
+-   **FOUNDER SECURITIES CO.** *Summer Intern*
+
+-   **CHINA CONSTRUCTION BANK** *Summer Intern*
+
+-   **CAKESILY FOOD COMPANY** *Management Trainee*
