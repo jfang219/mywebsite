@@ -1,0 +1,656 @@
+---
+title: "Session 4: Homework 2"
+author: "Group 6: Sonakshi Gupta, Jean Francois Peters, Wybe Harms, Drishti Goyal, Suzy Wang, Zezhou Tang"
+date: "2022-09-15"
+output:
+  html_document:
+    theme: flatly
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    code_folding: show
+editor_options: 
+  markdown: 
+    wrap: 72
+---
+
+
+
+<div id="climate-change-and-temperature-anomalies" class="section level1">
+<h1>Climate change and temperature anomalies</h1>
+<p>If we wanted to study climate change, we can find data on the <em>Combined
+Land-Surface Air and Sea-Surface Water Temperature Anomalies</em> in the
+Northern Hemisphere at <a href="https://data.giss.nasa.gov/gistemp">NASA’s Goddard Institute for Space
+Studies</a>. The <a href="https://data.giss.nasa.gov/gistemp/tabledata_v4/NH.Ts+dSST.txt">tabular data of
+temperature anomalies can be found
+here</a></p>
+<p>To define temperature anomalies you need to have a reference, or base,
+period which NASA clearly states that it is the period between
+1951-1980.</p>
+<pre class="r"><code>weather &lt;- 
+  read_csv(&quot;https://data.giss.nasa.gov/gistemp/tabledata_v4/NH.Ts+dSST.csv&quot;, 
+           skip = 1, 
+           na = &quot;***&quot;)</code></pre>
+<p>For each month and year, the dataframe shows the deviation of
+temperature from the normal (expected).</p>
+<p>You have two objectives in this section:</p>
+<ol style="list-style-type: decimal">
+<li><p>Select the year and the twelve month variables from the <code>weather</code>
+dataset. We do not need the others (J-D, D-N, DJF, etc.) for this
+assignment. Hint: use <code>select()</code> function.</p></li>
+<li><p>Convert the dataframe from wide to ‘long’ format. Hint: use
+<code>gather()</code> or <code>pivot_longer()</code> function. Name the new dataframe as
+<code>tidyweather</code>, name the variable containing the name of the month as
+<code>month</code>, and the temperature deviation values as <code>delta</code>.</p></li>
+</ol>
+<pre class="r"><code>tidyweather &lt;- weather %&gt;%
+  select(1:13) %&gt;%
+  pivot_longer(
+    cols = 2:13,
+    names_to = &quot;Month&quot;, 
+    values_to = &quot;delta&quot;)
+
+tidyweather</code></pre>
+<pre><code>## # A tibble: 1,716 × 3
+##     Year Month delta
+##    &lt;dbl&gt; &lt;chr&gt; &lt;dbl&gt;
+##  1  1880 Jan   -0.39
+##  2  1880 Feb   -0.53
+##  3  1880 Mar   -0.23
+##  4  1880 Apr   -0.3 
+##  5  1880 May   -0.05
+##  6  1880 Jun   -0.18
+##  7  1880 Jul   -0.21
+##  8  1880 Aug   -0.25
+##  9  1880 Sep   -0.24
+## 10  1880 Oct   -0.3 
+## # … with 1,706 more rows</code></pre>
+<div id="plotting-information" class="section level2">
+<h2>Plotting Information</h2>
+<p>Let us plot the data using a time-series scatter plot, and add a
+trendline. To do that, we first need to create a new variable called
+<code>date</code> in order to ensure that the <code>delta</code> values are plot
+chronologically.</p>
+<pre class="r"><code>tidyweather &lt;- tidyweather %&gt;%
+  mutate(date = ymd(paste(as.character(Year), Month, &quot;1&quot;)),
+         month = month(date, label=TRUE),
+         year = year(date))
+
+ggplot(tidyweather, aes(x=date, y = delta))+
+  geom_point()+
+  geom_smooth(color=&quot;red&quot;) + #plot the trend line
+  theme_bw() +
+  labs (
+    title = &quot;Weather Anomalies&quot;,
+    x = &quot;Date&quot;,
+    y = &quot;Delta&quot;
+  )</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/scatter_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>Is the effect of increasing temperature more pronounced in some months?</p>
+<ul>
+<li>The above graph shows a clear seasonal affect over the years.
+However, if we look at the graph below, it shows the deviation per
+month have very similar trend lines, reflective of the above graph.</li>
+</ul>
+<pre class="r"><code>ggplot(tidyweather, aes(x=date, y = delta))+
+  geom_point()+
+  geom_smooth(color=&quot;red&quot;) +
+  facet_wrap(~month) + #analyse over a each month
+  theme_bw() +
+  labs (
+    title = &quot;Weather Anomalies per Month&quot;,
+    x = &quot;Year&quot;,
+    y = &quot;Delta&quot;
+  )</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/facet_wrap-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>It is sometimes useful to group data into different time periods to
+study historical data. For example, we often refer to decades such as
+1970s, 1980s, 1990s etc. to refer to a period of time. NASA calcuialtes
+a temperature anomaly, as difference form the base periof of 1951-1980.
+The code below creates a new data frame called <code>comparison</code> that groups
+data in five time periods: 1881-1920, 1921-1950, 1951-1980, 1981-2010
+and 2011-present.</p>
+<pre class="r"><code>comparison &lt;- tidyweather %&gt;% 
+  filter(Year&gt;= 1881) %&gt;%     #remove years prior to 1881
+  #create new variable &#39;interval&#39;, and assign values based on criteria below:
+  mutate(interval = case_when(
+    Year %in% c(1881:1920) ~ &quot;1881-1920&quot;,
+    Year %in% c(1921:1950) ~ &quot;1921-1950&quot;,
+    Year %in% c(1951:1980) ~ &quot;1951-1980&quot;,
+    Year %in% c(1981:2010) ~ &quot;1981-2010&quot;,
+    TRUE ~ &quot;2011-present&quot;
+  ))</code></pre>
+<p>Now that we have the <code>interval</code> variable, we can create a density plot
+to study the distribution of monthly deviations (<code>delta</code>), grouped by
+the different time periods we are interested in.</p>
+<pre class="r"><code>comparison %&gt;%
+  group_by(interval) %&gt;%
+  ggplot(aes(
+    delta, 
+    fill = interval, #fill color by the different intervals
+    color = interval)) +
+  geom_density(alpha=1/3) +
+  theme_bw() +
+  labs(
+    title = &quot;Density Plot for Distribution of Monthly Temperature Deviations&quot;,
+    x = &quot;Delta&quot;,
+    y = NULL
+  )</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/density_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>So far, we have been working with monthly anomalies. However, we might
+be interested in average annual anomalies.</p>
+<pre class="r"><code>#creating yearly averages
+average_annual_anomaly &lt;- tidyweather %&gt;% 
+  group_by(Year) %&gt;%   #grouping data by Year
+  
+  # creating summaries for mean delta 
+  # use `na.rm=TRUE` to eliminate NA (not available) values 
+  summarise(mean_delta = mean(delta, na.rm = TRUE))
+
+#plotting the data:
+ggplot(average_annual_anomaly, 
+       aes(x = Year,
+           y = mean_delta)) +
+  geom_point() +
+  #Fit the best fit line, using LOESS method
+  geom_smooth(method = &quot;loess&quot;, se = TRUE) +
+  #change theme to theme_bw() to have white background + black frame around plot
+  theme_bw() +
+  labs(
+    title = &quot;Average Annual Anomslies&quot;,
+    x = &quot;Year&quot;,
+    y = &quot;Average Delta&quot;
+  )</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/averaging-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+<div id="confidence-interval-for-delta" class="section level2">
+<h2>Confidence Interval for <code>delta</code></h2>
+<p><a href="https://earthobservatory.nasa.gov/world-of-change/decadaltemp.php">NASA points out on their
+website</a>
+that</p>
+<blockquote>
+<p>A one-degree global change is significant because it takes a vast
+amount of heat to warm all the oceans, atmosphere, and land by that
+much. In the past, a one- to two-degree drop was all it took to plunge
+the Earth into the Little Ice Age.</p>
+</blockquote>
+<p>Your task is to construct a confidence interval for the average annual
+delta since 2011, both using a formula and using a bootstrap simulation
+with the <code>infer</code> package. Recall that the dataframe <code>comparison</code> has
+already grouped temperature anomalies according to time intervals; we
+are only interested in what is happening between 2011-present.</p>
+<pre class="r"><code>formula_ci &lt;- comparison %&gt;% 
+  
+  # choose the interval 2011-present
+  filter(interval==&quot;2011-present&quot;) %&gt;%
+  # calculate summary statistics for temperature deviation (delta) 
+  summarise(
+    # calculate mean, SD, count, SE, lower/upper 95% CI 
+    mean_delta = mean(delta, na.rm = TRUE),
+    sd_delta = sd(delta, na.rm = TRUE),
+    count = n(),
+    t_critical = qt(0.975, count-1),
+    se_delta = sd_delta/sqrt(count),
+    moe = t_critical*se_delta,
+    delta_lower = mean_delta - moe,
+    delta_upper = mean_delta + moe
+  )
+
+#print out formula_CI
+formula_ci</code></pre>
+<pre><code>## # A tibble: 1 × 8
+##   mean_delta sd_delta count t_critical se_delta    moe delta_lower delta_upper
+##        &lt;dbl&gt;    &lt;dbl&gt; &lt;int&gt;      &lt;dbl&gt;    &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;
+## 1       1.07    0.265   144       1.98   0.0221 0.0437        1.02        1.11</code></pre>
+<pre class="r"><code>library(infer)
+
+set.seed(1234)
+
+ci_bootstrap &lt;- comparison %&gt;%
+  filter(interval==&quot;2011-present&quot;) %&gt;%  # choose the interval 2011-present
+  infer::specify(response = delta) %&gt;%
+  infer::generate(reps = 1000, type = &quot;bootstrap&quot;) %&gt;%
+  infer::calculate(stat = &quot;mean&quot;)
+
+ci_percentile &lt;- ci_bootstrap %&gt;%
+  infer::get_confidence_interval(level = .95, type = &quot;percentile&quot;)
+
+ci_percentile</code></pre>
+<pre><code>## # A tibble: 1 × 2
+##   lower_ci upper_ci
+##      &lt;dbl&gt;    &lt;dbl&gt;
+## 1     1.02     1.11</code></pre>
+<blockquote>
+<p>What is the data showing us? Please type your answer after (and
+outside!) this blockquote. You have to explain what you have done, and
+the interpretation of the result. One paragraph max, please!</p>
+</blockquote>
+<p>We used two methods: the formula and the bootstrap method, to calculate
+the confidence interval of the delta which is N(1.02,1.11). This tells
+us that with the given mean and sd, we are 95% certain that the true
+mean delta falls between 1.02 and 1.11.</p>
+</div>
+</div>
+<div id="bidens-approval-margins" class="section level1">
+<h1>Biden’s Approval Margins</h1>
+<p>As we saw in class, fivethirtyeight.com has detailed data on <a href="https://projects.fivethirtyeight.com/biden-approval-ratings">all polls
+that track the president’s
+approval</a></p>
+<pre class="r"><code>approval_polllist &lt;- read_csv(&#39;https://projects.fivethirtyeight.com/biden-approval-data/approval_polllist.csv&#39;) 
+
+# Use `lubridate` to fix dates, as they are given as characters.
+approval_polllist &lt;- approval_polllist %&gt;%
+  mutate(
+    modeldate = mdy(modeldate),
+    startdate = mdy(startdate),
+    enddate = mdy(enddate),
+    createddate = mdy(createddate)
+  )
+
+glimpse(approval_polllist)</code></pre>
+<pre><code>## Rows: 4,559
+## Columns: 22
+## $ president           &lt;chr&gt; &quot;Joe Biden&quot;, &quot;Joe Biden&quot;, &quot;Joe Biden&quot;, &quot;Joe Biden&quot;…
+## $ subgroup            &lt;chr&gt; &quot;All polls&quot;, &quot;All polls&quot;, &quot;All polls&quot;, &quot;All polls&quot;…
+## $ modeldate           &lt;date&gt; 2022-09-15, 2022-09-15, 2022-09-15, 2022-09-15, 2…
+## $ startdate           &lt;date&gt; 2021-01-19, 2021-01-19, 2021-01-20, 2021-01-20, 2…
+## $ enddate             &lt;date&gt; 2021-01-21, 2021-01-21, 2021-01-22, 2021-01-21, 2…
+## $ pollster            &lt;chr&gt; &quot;Rasmussen Reports/Pulse Opinion Research&quot;, &quot;Morni…
+## $ grade               &lt;chr&gt; &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B+&quot;, &quot;B-&quot;, &quot;B&quot;, &quot;B&quot;, &quot;B+&quot;, &quot;B…
+## $ samplesize          &lt;dbl&gt; 1500, 15000, 15000, 1993, 1516, 1115, 15000, 1500,…
+## $ population          &lt;chr&gt; &quot;lv&quot;, &quot;a&quot;, &quot;a&quot;, &quot;rv&quot;, &quot;a&quot;, &quot;a&quot;, &quot;a&quot;, &quot;lv&quot;, &quot;rv&quot;, &quot;…
+## $ weight              &lt;dbl&gt; 0.3382, 0.2594, 0.2333, 0.0930, 1.2454, 1.1014, 0.…
+## $ influence           &lt;dbl&gt; 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,…
+## $ approve             &lt;dbl&gt; 48.0, 50.0, 51.0, 56.0, 45.0, 55.5, 52.0, 48.0, 63…
+## $ disapprove          &lt;dbl&gt; 45.0, 28.0, 28.0, 31.0, 28.0, 31.6, 29.0, 47.0, 37…
+## $ adjusted_approve    &lt;dbl&gt; 49.1, 49.4, 50.4, 55.4, 46.0, 54.6, 51.4, 49.1, 59…
+## $ adjusted_disapprove &lt;dbl&gt; 40.3, 30.9, 30.9, 33.9, 29.0, 32.5, 31.9, 42.3, 38…
+## $ multiversions       &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA…
+## $ tracking            &lt;lgl&gt; TRUE, TRUE, TRUE, NA, NA, NA, TRUE, TRUE, NA, NA, …
+## $ url                 &lt;chr&gt; &quot;https://www.rasmussenreports.com/public_content/p…
+## $ poll_id             &lt;dbl&gt; 74247, 74272, 74273, 74246, 74327, 74248, 74274, 7…
+## $ question_id         &lt;dbl&gt; 139395, 139491, 139492, 139394, 139570, 139404, 13…
+## $ createddate         &lt;date&gt; 2021-01-22, 2021-01-28, 2021-01-28, 2021-01-22, 2…
+## $ timestamp           &lt;chr&gt; &quot;09:45:31 15 Sep 2022&quot;, &quot;09:45:31 15 Sep 2022&quot;, &quot;0…</code></pre>
+<div id="create-a-plot" class="section level2">
+<h2>Create a plot</h2>
+<p>What I would like you to do is to calculate the average net approval
+rate (approve- disapprove) for each week since he got into office. I
+want you plot the net approval for each week in 2022, along with its 95%
+confidence interval. There are various dates given for each poll, please
+use <code>enddate</code>, i.e., the date the poll ended.</p>
+<pre class="r"><code>approval_polllist %&gt;%
+  filter(year(enddate) == 2022) %&gt;% #filtering for year 2022
+  mutate(Week = week(enddate)) %&gt;% #calculating week number
+  group_by(subgroup, Week) %&gt;%
+  mutate(rating = approve - disapprove) %&gt;% #calculating net approval rate
+  
+  #create confidence interval at 95% confidence
+  summarise(
+    mean_rating = mean(rating, na.rm = TRUE),
+    sd_rating = sd(rating, na.rm = TRUE),
+    count = n(),
+    t_critical = qt(.975,count-1),
+    se_rating = sd_rating/sqrt(count),
+    moe = t_critical * se_rating,
+    rating_low = mean_rating - moe,
+    rating_high = mean_rating + moe
+  ) %&gt;%
+  
+  # plot the graph
+  ggplot(aes(x=Week, color = subgroup, fill = subgroup)) +
+  geom_line(aes(y=rating_low), size = 1.2) +
+  geom_line(aes(y=rating_high), size = 1.2) +
+  geom_line(aes(y=mean_rating)) +
+  facet_wrap(~subgroup, ncol = 1) +
+  #to fill the area between the confidence interval lines
+  geom_ribbon(aes(
+    ymin = rating_low,
+    ymax = rating_high
+  ),fill = &quot;orange&quot;, alpha = 1/3) +
+  theme_bw() +
+  theme(legend.position = &quot;none&quot;) +
+  
+  #format the plot
+  labs(
+    title = &quot;Biden&#39;s Net Approval Ratings in 2022&quot;,
+    subtitle = &quot;Weekly Data, Approve - Disapprove&quot;,
+    x = &quot;Week in 2022&quot;,
+    y = NULL
+  )</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/trump_margins-1.png" width="100%" style="display: block; margin: auto;" /></p>
+</div>
+</div>
+<div id="challenge-1-excess-rentals-in-tfl-bike-sharing" class="section level1">
+<h1>Challenge 1: Excess rentals in TfL bike sharing</h1>
+<p>Recall the TfL data on how many bikes were hired every single day. We
+can get the latest data by running the following</p>
+<pre class="r"><code>url &lt;- &quot;https://data.london.gov.uk/download/number-bicycle-hires/ac29363e-e0cb-47cc-a97a-e216d900a6b0/tfl-daily-cycle-hires.xlsx&quot;
+
+# Download TFL data to temporary file
+httr::GET(url, write_disk(bike.temp &lt;- tempfile(fileext = &quot;.xlsx&quot;)))</code></pre>
+<pre><code>## Response [https://airdrive-secure.s3-eu-west-1.amazonaws.com/london/dataset/number-bicycle-hires/2022-09-06T12%3A41%3A48/tfl-daily-cycle-hires.xlsx?X-Amz-Algorithm=AWS4-HMAC-SHA256&amp;X-Amz-Credential=AKIAJJDIMAIVZJDICKHA%2F20220915%2Feu-west-1%2Fs3%2Faws4_request&amp;X-Amz-Date=20220915T155104Z&amp;X-Amz-Expires=300&amp;X-Amz-Signature=69b7f95e4edb31434dc688c263dc81aee0c21fee54a28e6f4d557b97b9e24cb8&amp;X-Amz-SignedHeaders=host]
+##   Date: 2022-09-15 15:51
+##   Status: 200
+##   Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+##   Size: 180 kB
+## &lt;ON DISK&gt;  /var/folders/rl/nrz17jqj7nncc2gtb00vqxlh0000gn/T//RtmpqW0RuU/file57de65c608c7.xlsx</code></pre>
+<pre class="r"><code># Use read_excel to read it as dataframe
+bike0 &lt;- read_excel(bike.temp,
+                   sheet = &quot;Data&quot;,
+                   range = cell_cols(&quot;A:B&quot;))
+
+# change dates to get year, month, and week
+bike &lt;- bike0 %&gt;% 
+  clean_names() %&gt;% 
+  rename (bikes_hired = number_of_bicycle_hires) %&gt;% 
+  mutate (year = year(day),
+          month = lubridate::month(day, label = TRUE),
+          week = isoweek(day))</code></pre>
+<p>We can easily create a facet grid that plots bikes hired by month and
+year since 2015</p>
+<pre class="r"><code>#create facet_grid
+bike %&gt;%
+  filter(year &gt; 2014) %&gt;%
+  ggplot(aes(bikes_hired)) +
+  geom_density() +
+  facet_grid(vars(year),vars(month)) +
+  theme_bw() +
+  labs(
+    title = &quot;Distribution of Bikes Hired per month since 2015&quot;,
+    x = &quot;Distribution of Bikes Hired&quot;,
+    y = NULL
+  ) +
+  theme(axis.text.y=element_blank(),
+        axis.ticks.y=element_blank())</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/tfl_month_year_grid-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>However, the challenge I want you to work on is to reproduce the
+following two graphs.</p>
+<pre class="r"><code># calculate expected bikes hired using 2016-2019
+expected &lt;- bike %&gt;%
+  filter(year &gt;= 2016 &amp; year &lt;=2019) %&gt;%
+  group_by(month) %&gt;%
+  mutate(expected_monthly = mean(bikes_hired)) %&gt;%
+  select(expected_monthly, month)
+
+# calculate actual monthly average of bikes
+actual &lt;- bike %&gt;%
+  filter(year &gt;= 2017) %&gt;%
+  group_by(year, month) %&gt;%
+  mutate(actual_monthly = mean(bikes_hired))
+
+# combined the two dfs  
+final &lt;- left_join(actual, expected, by = &#39;month&#39;) %&gt;%  
+  mutate(diff = actual_monthly - expected_monthly)
+
+final %&gt;% 
+  ggplot(aes(x=month, month = 1)) +
+    geom_line(aes(y = expected_monthly, group =1), color=&quot;#0096FF&quot;, size = 1.5) +
+    geom_line(aes(y = actual_monthly, group = 1)) +
+  # geom_ribbon to add green
+    geom_ribbon(aes(
+      ymax = expected_monthly, 
+      ymin = pmin(diff, 0) + expected_monthly), 
+      fill = &quot;#C70039&quot;, 
+      alpha = 0.4,
+      group = 1) +
+  # geom_ribbon to add red
+    geom_ribbon(aes(
+      ymax = actual_monthly, 
+      ymin = actual_monthly - pmax(diff,0)), 
+      fill = &quot;#007500&quot;, 
+      alpha = 0.4,
+      group = 1) +
+  # facet by year
+    facet_wrap(~year)+
+    labs(title = &quot;Month changes in TfL bike rentals&quot;, 
+         subtitle = &quot;Change from monthly average shown in blue and calculated between 2016-2019&quot;, 
+         caption = &quot;Source: TfL, London Data Store&quot;, 
+         x = &quot;Months&quot;,
+         y = &quot;Bike rentals&quot;)+
+    theme_bw()</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/tfl_absolute_monthly_change-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>The second one looks at percentage changes from the expected level of
+weekly rentals. The two grey shaded rectangles correspond to Q2 (weeks
+14-26) and Q4 (weeks 40-52).</p>
+<pre class="r"><code>#calculate actual bikes hired
+bike_week1 &lt;- bike %&gt;%
+  filter(year &gt; 2016) %&gt;%
+  group_by(year, week) %&gt;%
+  mutate(mean_bikes = mean(bikes_hired))
+
+#calculate expected hired bikes
+bike_week2 &lt;- bike %&gt;%
+  filter(year &gt;=2016, year &lt;= 2019) %&gt;%
+  group_by(week) %&gt;%
+  mutate(expected_hired = mean(bikes_hired))
+
+# join the two tables and calculate percent_change
+bikes_week &lt;- bike_week1 %&gt;%
+  full_join(bike_week2, by=&quot;week&quot;) %&gt;%
+  mutate(
+    pct_change = (mean_bikes - expected_hired)/expected_hired,
+    color_id = pct_change &gt; 0)
+
+#create plot
+ggplot(bikes_week,
+       aes(x = week)) +
+  annotate(&quot;rect&quot;,fill =&quot;grey&quot;,alpha = 0.5,xmin = 14,xmax = 26, ymin =-Inf,ymax =Inf) +
+  annotate(&quot;rect&quot;,fill =&quot;grey&quot;,alpha = 0.5,xmin = 40,xmax = 52, ymin =-Inf,ymax =Inf) +
+  geom_line(aes(y = pct_change)) +
+  facet_wrap(~year.x) +
+  
+  #fill the pct_change under 0%
+  geom_ribbon(
+    aes(ymin = 0,
+        ymax = pmax(0,pct_change),
+        fill = &quot;red&quot;),
+    alpha = .4) +
+  
+  #fill the pct_change over 0%
+  geom_ribbon(
+    aes(ymin = pmin(0, pct_change),
+        ymax = 0,
+        fill = &quot;green&quot;),
+    alpha = .4) +
+  
+  #create geom_rug()
+  geom_rug(aes(color=color_id),sides = &quot;b&quot;) +
+  
+  
+  #format the plot
+  labs(
+    title = &quot;Weekly changes in TfL bike rentals&quot;,
+    subtitle = &quot;% changes from weekly averages calculated between 2016-2019&quot;,
+    x = &quot;Week&quot;,
+    y = NULL
+  ) +
+  theme_bw() +
+  theme(legend.position = &quot;none&quot;)</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/tfl_percent_change-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>Should you use the mean or the median to calculate your expected
+rentals? Why?</p>
+<ul>
+<li>We decided to use mean, because the data showed seasonal trends and
+there were not many clear outliers, which would affect the data.</li>
+</ul>
+</div>
+<div id="challenge-2-share-of-renewable-energy-production-in-the-world" class="section level1">
+<h1>Challenge 2: Share of renewable energy production in the world</h1>
+<p>The National Bureau of Economic Research (NBER) has a a very interesting
+dataset on the adoption of about 200 technologies in more than 150
+countries since 1800. This is the<a href="https://www.nber.org/research/data/cross-country-historical-adoption-technology">Cross-country Historical Adoption of
+Technology (CHAT)
+dataset</a>.</p>
+<pre class="r"><code>technology &lt;- readr::read_csv(&#39;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-07-19/technology.csv&#39;)
+
+#get all technologies
+labels &lt;- technology %&gt;% 
+  distinct(variable, label)
+
+# Get country names using &#39;countrycode&#39; package
+technology &lt;- technology %&gt;% 
+  filter(iso3c != &quot;XCD&quot;) %&gt;% 
+  mutate(iso3c = recode(iso3c, &quot;ROM&quot; = &quot;ROU&quot;),
+         country = countrycode(iso3c, origin = &quot;iso3c&quot;, destination = &quot;country.name&quot;),
+         country = case_when(
+           iso3c == &quot;ANT&quot; ~ &quot;Netherlands Antilles&quot;,
+           iso3c == &quot;CSK&quot; ~ &quot;Czechoslovakia&quot;,
+           iso3c == &quot;XKX&quot; ~ &quot;Kosovo&quot;,
+           TRUE           ~ country))
+
+#make smaller dataframe on energy
+energy &lt;- technology %&gt;% 
+  filter(category == &quot;Energy&quot;)
+
+# download CO2 per capita from World Bank using {wbstats} package
+# https://data.worldbank.org/indicator/EN.ATM.CO2E.PC
+co2_percap &lt;- wb_data(country = &quot;countries_only&quot;, 
+                      indicator = &quot;EN.ATM.CO2E.PC&quot;, 
+                      start_date = 1970, 
+                      end_date = 2022,
+                      return_wide=FALSE) %&gt;% 
+  filter(!is.na(value)) %&gt;% 
+  #drop unwanted variables
+  select(-c(unit, obs_status, footnote, last_updated))
+
+# get a list of countries and their characteristics
+# we just want to get the region a country is in and its income level
+countries &lt;-  wb_cachelist$countries %&gt;% 
+  select(iso3c,region,income_level)</code></pre>
+<p>First, produce a graph with the countries with the highest and lowest %
+contribution of renewables in energy production. This is made up of
+<code>elec_hydro</code>, <code>elec_solar</code>, <code>elec_wind</code>, and <code>elec_renew_other</code>. You may
+want to use the <em>patchwork</em> package to assemble the two charts next to
+each other.</p>
+<pre class="r"><code>library(patchwork)
+
+x &lt;- energy %&gt;%
+  pivot_wider(names_from=variable, values_from=value) %&gt;% #used pivot_wider to get a value for each variable
+  filter(year==2019) %&gt;%
+  group_by(country) %&gt;%
+  summarise(elec_hydro = sum(elec_hydro, na.rm=TRUE),
+           elec_solar = sum(elec_solar, na.rm=TRUE),
+           elec_wind = sum(elec_wind, na.rm=TRUE),
+           elec_renew = sum(elec_renew_other, na.rm=TRUE),
+           elecprod = sum(elecprod, na.rm=TRUE)) %&gt;%
+  mutate(percentage = (elec_hydro+elec_solar+elec_wind+elec_renew)/elecprod, #calc the total pct
+         # dealing with na and infinites in the calculation
+         percentage = if_else(is.na(percentage),0,percentage), 
+         percentage = if_else(is.infinite(percentage),0,percentage)) %&gt;% 
+  filter(percentage&gt;0) #filter for all positive and non-zero percentages
+
+top_20 &lt;- x%&gt;%
+  mutate(country=fct_reorder(country,percentage)) %&gt;% #reordering country by percentage
+  arrange(desc(percentage)) %&gt;%
+  slice_max(country,n=20) %&gt;% #deriving the top 20
+  #plot the graph
+  ggplot(aes(percentage,country)) + 
+  geom_col() +
+  theme_bw() +
+  scale_x_continuous(labels = scales::percent_format(scale = 100))
+
+bottom_20 &lt;- x%&gt;%
+  mutate(country=fct_reorder(country,percentage)) %&gt;% #reordering country by percentage
+  arrange(percentage) %&gt;%
+  slice_min(country,n=20) %&gt;% #deriving the bottom 20
+  ggplot(aes(percentage,country)) + 
+  geom_col() +
+  theme_bw() +
+  scale_x_continuous(labels = scales::percent_format(scale = 100))
+
+plot20 &lt;- (top_20 + bottom_20) + #combining the two graphs
+  plot_annotation(&quot;Highest and Lowest % of Renewables in Energy Production&quot;)
+plot20</code></pre>
+<p><img src="/blogs/homework2_files/figure-html/min-max_renewables-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>Second, you can produce an animation to explore the relationship between
+CO2 per capita emissions and the deployment of renewables. As the % of
+energy generated by renewables goes up, do CO2 per capita emissions seem
+to go down?</p>
+<ul>
+<li>As we can see from the graph the lower income groups have almost
+negligible CO2 per capita and thus, we cannot observe any
+significant pattern. However, for the higher income groups, we can
+see that over the years the renewable energy consumption has been
+increasing with reducing CO2 per capita. This can also be because,
+usage of renewable energy requires larger upfront capital which the
+higher income groups have.</li>
+</ul>
+<pre class="r"><code>y &lt;- co2_percap %&gt;%
+  inner_join(countries, iso3c=iso3c) %&gt;%
+  rename(value_co2=value) %&gt;%
+  mutate(date=as.integer(date)) %&gt;%
+  left_join(energy, by=c(&#39;country&#39;=&#39;country&#39;,&#39;date&#39;=&#39;year&#39;))
+
+z &lt;- y %&gt;%
+  pivot_wider(names_from=variable, values_from=value) %&gt;%
+  group_by(date,country) %&gt;%
+  summarise(elec_hydro=sum(elec_hydro, na.rm=TRUE),
+           elec_solar=sum(elec_solar, na.rm=TRUE),
+           elec_wind= sum(elec_wind, na.rm=TRUE),
+           elec_renew=sum(elec_renew_other, na.rm=TRUE),
+           elecprod=sum(elecprod, na.rm=TRUE),
+           value_co2=sum(value_co2),
+           income_level=income_level) %&gt;%
+  mutate(percentage=(elec_hydro+elec_solar+elec_wind+elec_renew)/elecprod,
+         percentage = if_else(is.infinite(percentage),0,percentage)) %&gt;%
+  pivot_longer(starts_with(&quot;elec&quot;), names_to=&quot;variable&quot;, values_to = &quot;value&quot;)
+
+ggplot(z, aes(percentage, value_co2, color=income_level)) +
+  geom_point() +
+  facet_wrap(~income_level) +
+  labs(title = &#39;Year: {frame_time}&#39;, 
+       x = &#39;% renewables&#39;, 
+       y = &#39;CO2 per cap&#39;) +
+  transition_time(as.integer(date)) +
+  scale_x_continuous(labels = scales::percent_format(scale = 100)) +
+  ease_aes(&#39;linear&#39;) + 
+  theme(legend.position = &quot;none&quot;)</code></pre>
+<pre><code>## NULL</code></pre>
+</div>
+<div id="deliverables" class="section level1">
+<h1>Deliverables</h1>
+<p>As usual, there is a lot of explanatory text, comments, etc. You do not
+need these, so delete them and produce a stand-alone document that you
+could share with someone. Knit the edited and completed R Markdown file
+as an HTML document (use the “Knit” button at the top of the script
+editor window) and upload it to Canvas.</p>
+</div>
+<div id="details" class="section level1">
+<h1>Details</h1>
+<ul>
+<li>Who did you collaborate with: <strong>Group 6 - Sonakshi Gupta, Jean
+Francois Peters, Wybe Harms, Drishti Goyal, Suzy Wang, Zezhou Tang</strong></li>
+<li>Approximately how much time did you spend on this problem set: <strong>6
+hrs 20 min 33 seconds</strong></li>
+<li>What, if anything, gave you the most trouble: <strong>Creating coloured
+ribbons for the graphs</strong></li>
+</ul>
+<p><strong>Please seek out help when you need it,</strong> and remember the <a href="https://mam202.netlify.app/syllabus/#the-15-minute-rule" target="_blank">15-minute
+rule</a>.
+You know enough R (and have enough examples of code from class and your
+readings) to be able to do this. If you get stuck, ask for help from
+others, post a question on Slack– and remember that I am here to help
+too!</p>
+<blockquote>
+<p>As a true test to yourself, do you understand the code you submitted
+and are you able to explain it to someone else?</p>
+</blockquote>
+</div>
+<div id="rubric" class="section level1">
+<h1>Rubric</h1>
+<p>Check minus (1/5): Displays minimal effort. Doesn’t complete all
+components. Code is poorly written and not documented. Uses the same
+type of plot for each graph, or doesn’t use plots appropriate for the
+variables being analyzed.</p>
+<p>Check (3/5): Solid effort. Hits all the elements. No clear mistakes.
+Easy to follow (both the code and the output).</p>
+<p>Check plus (5/5): Finished all components of the assignment correctly
+and addressed both challenges. Code is well-documented (both
+self-documented and with additional comments as necessary). Used
+tidyverse, instead of base R. Graphs and tables are properly labelled.
+Analysis is clear and easy to follow, either because graphs are labeled
+clearly or you’ve written additional text to describe how you interpret
+the output.</p>
+</div>
