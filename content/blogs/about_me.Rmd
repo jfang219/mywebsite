@@ -10,9 +10,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## 1 Basic Information
 
-::: {.image style="text-align:center"}
-< img src="square.jpg" width="15%" text-align="center"/>
-:::
 
 |    Name     |  Sex  |   Birthday   |  Nationality  |
 |:-----------:|:----:|:------------:|:-----------:|
