@@ -71,23 +71,23 @@ params:
       - image: lbs.jpg
         subtitle: Example
         title: Risk Return
-        url: blogs/risk_return.Rmd
+        url: blogs/risk_return
       - image: pic02.jpg
         subtitle: Jingyi Fang
         title: About Me
-        url: blogs/about_me.Rmd
+        url: blogs/about_me
       - image: pic03.jpg
+        subtitle: Group Project 1
+        title: Homework 1
+        url: blogs/homework1
+      - image: pic04.jpgm
         subtitle: Group Project 2
         title: Homework 2
-        url: blogs/homework2.Rmd
-      - image: pic04.jpgm
-        subtitle: Group Project 3
-        title: Homework 3
-        url: blogs/homework3.Rmd
+        url: blogs/homework2
       - image: pic05.jpg
         subtitle: 
         title: My CV
-        url: blogs/
+        url: blogs/cv.pdf
       - image: pic06.jpg
         subtitle: Feugiat Amet Tempus
         title: Etiam
@@ -95,11 +95,6 @@ params:
   two:
     buttonText: Get Started
     enable: yes
-    subtitle: "Nullam et orci eu lorem consequat tincidunt vivamus et sagittis libero.
-      \n    Mauris aliquet magna magna sed nunc rhoncus pharetra. \n    Pellentesque
-      condimentum sem. In efficitur ligula tate urna. Maecenas laoreet massa vel lacinia
-      pellentesque lorem ipsum dolor. \n    Nullam et orci eu lorem consequat tincidunt.
-      Vivamus et sagittis libero.\n    Mauris aliquet magna magna sed nunc rhoncus
-      amet pharetra et feugiat tempus."
+    subtitle: "XXX"
     title: Massa libero
     url: blogs
