@@ -15,7 +15,6 @@ knitr::opts_chunk$set(echo = TRUE)
 |:-----------:|:----:|:------------:|:-----------:|
 | Jingyi Fang | Female | Feb 19, 1999 |  Chinese  |
 
-: Basic information
 
 ## 2 Past Experience
 
