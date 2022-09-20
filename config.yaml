@@ -95,6 +95,6 @@ params:
   two:
     buttonText: Get Started
     enable: yes
-    subtitle: "XXX"
-    title: Massa libero
+    # subtitle: 
+    title: Jingyi Fang
     url: blogs
