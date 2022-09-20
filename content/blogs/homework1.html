@@ -1,0 +1,1403 @@
+---
+title: "Session 2: Homework 1"
+author: "Ishaan Khetan, Kathlyn Lee, Emilia Moskala, Juan Sanchez-Blanco, Sylvie Zheng, Jingyi Fang"
+date: "2022-09-20"
+output:
+  html_document:
+    theme: flatly
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    code_folding: show
+---
+
+
+
+<div id="rents-in-san-francisco-2000-2018" class="section level1">
+<h1>Rents in San Francisco 2000-2018</h1>
+<pre class="r"><code># download directly off tidytuesdaygithub repo
+
+rent &lt;- readr::read_csv(&#39;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-07-05/rent.csv&#39;)</code></pre>
+<p>What are the variable types? Do they all correspond to what they really are? Which variables have most missing values?</p>
+<p>The variable types are: character(chr), integer(int), double(dbl). The data type for date is ‘double’ but it should be ‘date’. The column description seems to have the most missing values.</p>
+<pre class="r"><code>skimr::skim(rent)</code></pre>
+<table>
+<caption>(#tab:skim_data)Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">rent</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">200796</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">17</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">8</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">9</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<colgroup>
+<col width="18%" />
+<col width="13%" />
+<col width="18%" />
+<col width="5%" />
+<col width="8%" />
+<col width="8%" />
+<col width="12%" />
+<col width="14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">post_id</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">9</td>
+<td align="right">14</td>
+<td align="right">0</td>
+<td align="right">200796</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">nhood</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">4</td>
+<td align="right">43</td>
+<td align="right">0</td>
+<td align="right">167</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">city</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">5</td>
+<td align="right">19</td>
+<td align="right">0</td>
+<td align="right">104</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">county</td>
+<td align="right">1394</td>
+<td align="right">0.99</td>
+<td align="right">4</td>
+<td align="right">13</td>
+<td align="right">0</td>
+<td align="right">10</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">address</td>
+<td align="right">196888</td>
+<td align="right">0.02</td>
+<td align="right">1</td>
+<td align="right">38</td>
+<td align="right">0</td>
+<td align="right">2869</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">title</td>
+<td align="right">2517</td>
+<td align="right">0.99</td>
+<td align="right">2</td>
+<td align="right">298</td>
+<td align="right">0</td>
+<td align="right">184961</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">descr</td>
+<td align="right">197542</td>
+<td align="right">0.02</td>
+<td align="right">13</td>
+<td align="right">16975</td>
+<td align="right">0</td>
+<td align="right">3025</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">details</td>
+<td align="right">192780</td>
+<td align="right">0.04</td>
+<td align="right">4</td>
+<td align="right">595</td>
+<td align="right">0</td>
+<td align="right">7667</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<colgroup>
+<col width="11%" />
+<col width="8%" />
+<col width="11%" />
+<col width="8%" />
+<col width="7%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="9%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">date</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">2.01e+07</td>
+<td align="right">44694.07</td>
+<td align="right">2.00e+07</td>
+<td align="right">2.01e+07</td>
+<td align="right">2.01e+07</td>
+<td align="right">2.01e+07</td>
+<td align="right">2.02e+07</td>
+<td align="left">▁▇▁▆▃</td>
+</tr>
+<tr class="even">
+<td align="left">year</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">2.01e+03</td>
+<td align="right">4.48</td>
+<td align="right">2.00e+03</td>
+<td align="right">2.00e+03</td>
+<td align="right">2.01e+03</td>
+<td align="right">2.01e+03</td>
+<td align="right">2.02e+03</td>
+<td align="left">▁▇▁▆▃</td>
+</tr>
+<tr class="odd">
+<td align="left">price</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">2.14e+03</td>
+<td align="right">1427.75</td>
+<td align="right">2.20e+02</td>
+<td align="right">1.30e+03</td>
+<td align="right">1.80e+03</td>
+<td align="right">2.50e+03</td>
+<td align="right">4.00e+04</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">beds</td>
+<td align="right">6608</td>
+<td align="right">0.97</td>
+<td align="right">1.89e+00</td>
+<td align="right">1.08</td>
+<td align="right">0.00e+00</td>
+<td align="right">1.00e+00</td>
+<td align="right">2.00e+00</td>
+<td align="right">3.00e+00</td>
+<td align="right">1.20e+01</td>
+<td align="left">▇▂▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">baths</td>
+<td align="right">158121</td>
+<td align="right">0.21</td>
+<td align="right">1.68e+00</td>
+<td align="right">0.69</td>
+<td align="right">1.00e+00</td>
+<td align="right">1.00e+00</td>
+<td align="right">2.00e+00</td>
+<td align="right">2.00e+00</td>
+<td align="right">8.00e+00</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">sqft</td>
+<td align="right">136117</td>
+<td align="right">0.32</td>
+<td align="right">1.20e+03</td>
+<td align="right">5000.22</td>
+<td align="right">8.00e+01</td>
+<td align="right">7.50e+02</td>
+<td align="right">1.00e+03</td>
+<td align="right">1.36e+03</td>
+<td align="right">9.00e+05</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">room_in_apt</td>
+<td align="right">0</td>
+<td align="right">1.00</td>
+<td align="right">0.00e+00</td>
+<td align="right">0.04</td>
+<td align="right">0.00e+00</td>
+<td align="right">0.00e+00</td>
+<td align="right">0.00e+00</td>
+<td align="right">0.00e+00</td>
+<td align="right">1.00e+00</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">lat</td>
+<td align="right">193145</td>
+<td align="right">0.04</td>
+<td align="right">3.77e+01</td>
+<td align="right">0.35</td>
+<td align="right">3.36e+01</td>
+<td align="right">3.74e+01</td>
+<td align="right">3.78e+01</td>
+<td align="right">3.78e+01</td>
+<td align="right">4.04e+01</td>
+<td align="left">▁▁▅▇▁</td>
+</tr>
+<tr class="odd">
+<td align="left">lon</td>
+<td align="right">196484</td>
+<td align="right">0.02</td>
+<td align="right">-1.22e+02</td>
+<td align="right">0.78</td>
+<td align="right">-1.23e+02</td>
+<td align="right">-1.22e+02</td>
+<td align="right">-1.22e+02</td>
+<td align="right">-1.22e+02</td>
+<td align="right">-7.42e+01</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+</tbody>
+</table>
+<pre class="r"><code>rent %&gt;% 
+  count(city, sort=TRUE) %&gt;% 
+  mutate(prop = n/sum(n)) %&gt;% 
+  slice_max(prop, n=20) %&gt;% 
+  mutate(city = fct_reorder(city, prop)) %&gt;% 
+  ggplot(aes(x=city, y = prop)) +
+  coord_flip() +
+  geom_col() +
+  theme_minimal(base_size=14) +
+  scale_y_continuous(labels = scales::percent) +
+  labs(
+    title=&quot;San Francisco accounts for more than a quarter of all rental classifieds&quot;,
+    subtitle=&quot;% of Craigslist listongs, 2000-2018&quot;,
+    caption = &quot;Source: Pennington, Kate (2018). Bay Area Craigslist Rental Housing Posts, 2000-2018&quot;,
+    x=NULL,
+    y=NULL
+    )</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/top_cities-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>by_year_sf &lt;- rent %&gt;% 
+  filter(city == &quot;san francisco&quot;) %&gt;% 
+  group_by(year, beds) %&gt;% 
+  summarize(median_price = median(price))
+
+by_year_sf %&gt;% 
+  filter(beds &lt;=3) %&gt;% 
+  ggplot(aes(x=year, y=median_price, colour = factor(beds))) +
+  geom_line() +
+  labs(title=&#39;San Francisco rents have been steadily increasing&#39;, subtitle=&#39;0 to 3-bed listings, 2000-2008&#39;, caption=&#39;Source:Pennington, Kate (2018). Bay Area Craigslist Rental Housing Posts, 2000-2018&#39;, x=&#39;Years&#39;, y=&#39;Median Prices&#39;) +
+  theme(legend.position = &quot;none&quot;) +
+  facet_wrap(~beds, nrow=1)</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/sf_median_prices-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>list_of_top_12_cities=rent %&gt;% 
+  count(city, sort=TRUE) %&gt;% 
+  mutate(prop = n/sum(n)) %&gt;% 
+  slice_max(prop, n=12) %&gt;% 
+  mutate(city = fct_reorder(city, prop))
+
+list_of_rent_for_top_12_cities=
+  left_join(list_of_top_12_cities,rent,by=&quot;city&quot;)
+
+
+list_of_rent_for_top_12_cities %&gt;% 
+  filter(beds==1) %&gt;% 
+  group_by(city,year) %&gt;% 
+  summarise(median=median(price)) %&gt;% 
+  ggplot(aes(x=year,y=median, color=city))+geom_line()+
+   labs(title=&#39;Rental prices for 1-bedroom flats in the bay area&#39;, caption=&#39;Source:Pennington, Kate (2018). Bay Area Craigslist Rental Housing Posts, 2000-2018&#39;, x=&#39;Years&#39;, y=&#39;Median Prices&#39;) +
+  theme(legend.position = &quot;none&quot;) +
+  facet_wrap(~city)</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/spirit_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>There is an overall increase in the median rental price among all these 12 cities in the Bay Area. San Francisco had experienced the highest median rental prices and most steep trend in the 18 years. This could be due to the boom in the tech industry in the bay area in the past few years, resulting in an overall increase in rental prices as more people moved into the area.</p>
+</blockquote>
+</div>
+<div id="analysis-of-movies--imdb-dataset" class="section level1">
+<h1>Analysis of movies- IMDB dataset</h1>
+<p>We will look at a subset sample of movies, taken from the <a href="https://www.kaggle.com/carolzhangdc/imdb-5000-movie-dataset">Kaggle IMDB 5000 movie dataset</a></p>
+<pre class="r"><code>movies &lt;- read_csv(here::here(&quot;data&quot;, &quot;movies.csv&quot;))
+glimpse(movies)</code></pre>
+<pre><code>## Rows: 2,961
+## Columns: 11
+## $ title               &lt;chr&gt; &quot;Avatar&quot;, &quot;Titanic&quot;, &quot;Jurassic World&quot;, &quot;The Avenge…
+## $ genre               &lt;chr&gt; &quot;Action&quot;, &quot;Drama&quot;, &quot;Action&quot;, &quot;Action&quot;, &quot;Action&quot;, &quot;…
+## $ director            &lt;chr&gt; &quot;James Cameron&quot;, &quot;James Cameron&quot;, &quot;Colin Trevorrow…
+## $ year                &lt;dbl&gt; 2009, 1997, 2015, 2012, 2008, 1999, 1977, 2015, 20…
+## $ duration            &lt;dbl&gt; 178, 194, 124, 173, 152, 136, 125, 141, 164, 93, 1…
+## $ gross               &lt;dbl&gt; 7.61e+08, 6.59e+08, 6.52e+08, 6.23e+08, 5.33e+08, …
+## $ budget              &lt;dbl&gt; 2.37e+08, 2.00e+08, 1.50e+08, 2.20e+08, 1.85e+08, …
+## $ cast_facebook_likes &lt;dbl&gt; 4834, 45223, 8458, 87697, 57802, 37723, 13485, 920…
+## $ votes               &lt;dbl&gt; 886204, 793059, 418214, 995415, 1676169, 534658, 9…
+## $ reviews             &lt;dbl&gt; 3777, 2843, 1934, 2425, 5312, 3917, 1752, 1752, 35…
+## $ rating              &lt;dbl&gt; 7.9, 7.7, 7.0, 8.1, 9.0, 6.5, 8.7, 7.5, 8.5, 7.2, …</code></pre>
+<p>Besides the obvious variables of <code>title</code>, <code>genre</code>, <code>director</code>, <code>year</code>, and <code>duration</code>, the rest of the variables are as follows:</p>
+<ul>
+<li><code>gross</code> : The gross earnings in the US box office, not adjusted for inflation</li>
+<li><code>budget</code>: The movie’s budget</li>
+<li><code>cast_facebook_likes</code>: the number of facebook likes cast memebrs received</li>
+<li><code>votes</code>: the number of people who voted for (or rated) the movie in IMDB</li>
+<li><code>reviews</code>: the number of reviews for that movie</li>
+<li><code>rating</code>: IMDB average rating</li>
+</ul>
+<div id="use-your-data-import-inspection-and-cleaning-skills-to-answer-the-following" class="section level2">
+<h2>Use your data import, inspection, and cleaning skills to answer the following:</h2>
+<ul>
+<li>Are there any missing values (NAs)? Are all entries distinct or are there duplicate entries?</li>
+</ul>
+<p>There are no missing values, we can check this using the following code:</p>
+<pre class="r"><code>skim(movies)</code></pre>
+<table>
+<caption><span id="tab:unnamed-chunk-2">Table 1: </span>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">movies</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">2961</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">11</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">3</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">8</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table>
+<colgroup>
+<col width="19%" />
+<col width="13%" />
+<col width="19%" />
+<col width="5%" />
+<col width="5%" />
+<col width="8%" />
+<col width="12%" />
+<col width="15%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">title</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="right">83</td>
+<td align="right">0</td>
+<td align="right">2907</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">genre</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">11</td>
+<td align="right">0</td>
+<td align="right">17</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">director</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">32</td>
+<td align="right">0</td>
+<td align="right">1366</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table>
+<colgroup>
+<col width="17%" />
+<col width="8%" />
+<col width="12%" />
+<col width="7%" />
+<col width="7%" />
+<col width="6%" />
+<col width="7%" />
+<col width="7%" />
+<col width="7%" />
+<col width="7%" />
+<col width="9%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">year</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">2.00e+03</td>
+<td align="right">9.95e+00</td>
+<td align="right">1920.0</td>
+<td align="right">2.00e+03</td>
+<td align="right">2.00e+03</td>
+<td align="right">2.01e+03</td>
+<td align="right">2.02e+03</td>
+<td align="left">▁▁▁▂▇</td>
+</tr>
+<tr class="even">
+<td align="left">duration</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1.10e+02</td>
+<td align="right">2.22e+01</td>
+<td align="right">37.0</td>
+<td align="right">9.50e+01</td>
+<td align="right">1.06e+02</td>
+<td align="right">1.19e+02</td>
+<td align="right">3.30e+02</td>
+<td align="left">▃▇▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">gross</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">5.81e+07</td>
+<td align="right">7.25e+07</td>
+<td align="right">703.0</td>
+<td align="right">1.23e+07</td>
+<td align="right">3.47e+07</td>
+<td align="right">7.56e+07</td>
+<td align="right">7.61e+08</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">budget</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">4.06e+07</td>
+<td align="right">4.37e+07</td>
+<td align="right">218.0</td>
+<td align="right">1.10e+07</td>
+<td align="right">2.60e+07</td>
+<td align="right">5.50e+07</td>
+<td align="right">3.00e+08</td>
+<td align="left">▇▂▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">cast_facebook_likes</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1.24e+04</td>
+<td align="right">2.05e+04</td>
+<td align="right">0.0</td>
+<td align="right">2.24e+03</td>
+<td align="right">4.60e+03</td>
+<td align="right">1.69e+04</td>
+<td align="right">6.57e+05</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">votes</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">1.09e+05</td>
+<td align="right">1.58e+05</td>
+<td align="right">5.0</td>
+<td align="right">1.99e+04</td>
+<td align="right">5.57e+04</td>
+<td align="right">1.33e+05</td>
+<td align="right">1.69e+06</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="odd">
+<td align="left">reviews</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">5.03e+02</td>
+<td align="right">4.94e+02</td>
+<td align="right">2.0</td>
+<td align="right">1.99e+02</td>
+<td align="right">3.64e+02</td>
+<td align="right">6.31e+02</td>
+<td align="right">5.31e+03</td>
+<td align="left">▇▁▁▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">rating</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">6.39e+00</td>
+<td align="right">1.05e+00</td>
+<td align="right">1.6</td>
+<td align="right">5.80e+00</td>
+<td align="right">6.50e+00</td>
+<td align="right">7.10e+00</td>
+<td align="right">9.30e+00</td>
+<td align="left">▁▁▆▇▁</td>
+</tr>
+</tbody>
+</table>
+<p>There are 2961 observations, all unique:</p>
+<pre class="r"><code>count(movies) == n_distinct(movies)</code></pre>
+<pre><code>##         n
+## [1,] TRUE</code></pre>
+<ul>
+<li>Produce a table with the count of movies by genre, ranked in descending order</li>
+</ul>
+<pre class="r"><code>movies %&gt;% 
+  group_by(genre) %&gt;% 
+  summarise(count_genre = count(genre)) %&gt;% 
+  arrange(desc(count_genre))</code></pre>
+<pre><code>## # A tibble: 17 × 2
+##    genre       count_genre
+##    &lt;chr&gt;             &lt;int&gt;
+##  1 Comedy              848
+##  2 Action              738
+##  3 Drama               498
+##  4 Adventure           288
+##  5 Crime               202
+##  6 Biography           135
+##  7 Horror              131
+##  8 Animation            35
+##  9 Fantasy              28
+## 10 Documentary          25
+## 11 Mystery              16
+## 12 Sci-Fi                7
+## 13 Family                3
+## 14 Musical               2
+## 15 Romance               2
+## 16 Western               2
+## 17 Thriller              1</code></pre>
+<ul>
+<li>Produce a table with the average gross earning and budget (<code>gross</code> and <code>budget</code>) by genre. Calculate a variable <code>return_on_budget</code> which shows how many $ did a movie make at the box office for each $ of its budget. Ranked genres by this <code>return_on_budget</code> in descending order</li>
+</ul>
+<pre class="r"><code>movies %&gt;% 
+  group_by(genre) %&gt;% 
+  summarise(mean_gross = mean(gross), mean_budget = mean(budget)) %&gt;% 
+  mutate(return_on_budget = mean_gross/mean_budget) %&gt;% 
+  arrange(desc(return_on_budget))</code></pre>
+<pre><code>## # A tibble: 17 × 4
+##    genre       mean_gross mean_budget return_on_budget
+##    &lt;chr&gt;            &lt;dbl&gt;       &lt;dbl&gt;            &lt;dbl&gt;
+##  1 Musical      92084000     3189500          28.9    
+##  2 Family      149160478.   14833333.         10.1    
+##  3 Western      20821884     3465000           6.01   
+##  4 Documentary  17353973.    5887852.          2.95   
+##  5 Horror       37713738.   13504916.          2.79   
+##  6 Fantasy      42408841.   17582143.          2.41   
+##  7 Comedy       42630552.   24446319.          1.74   
+##  8 Mystery      67533021.   39218750           1.72   
+##  9 Animation    98433792.   61701429.          1.60   
+## 10 Biography    45201805.   28543696.          1.58   
+## 11 Adventure    95794257.   66290069.          1.45   
+## 12 Drama        37465371.   26242933.          1.43   
+## 13 Crime        37502397.   26596169.          1.41   
+## 14 Romance      31264848.   25107500           1.25   
+## 15 Action       86583860.   71354888.          1.21   
+## 16 Sci-Fi       29788371.   27607143.          1.08   
+## 17 Thriller         2468      300000           0.00823</code></pre>
+<ul>
+<li>Produce a table that shows the top 15 directors who have created the highest gross revenue in the box office. Don’t just show the total gross amount, but also the mean, median, and standard deviation per director.</li>
+</ul>
+<pre class="r"><code>movies %&gt;% 
+  group_by(director) %&gt;% 
+  summarise(total_gross = sum(gross), 
+            mean_gross = mean(gross), 
+            med_gross = median(gross),
+            sd_gross = sd(gross)) %&gt;% 
+  slice_max(total_gross, n=15)</code></pre>
+<pre><code>## # A tibble: 15 × 5
+##    director          total_gross mean_gross  med_gross   sd_gross
+##    &lt;chr&gt;                   &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;
+##  1 Steven Spielberg   4014061704 174524422. 164435221  101421051.
+##  2 Michael Bay        2231242537 171634041. 138396624  127161579.
+##  3 Tim Burton         2071275480 129454718.  76519172  108726924.
+##  4 Sam Raimi          2014600898 201460090. 234903076  162126632.
+##  5 James Cameron      1909725910 318287652. 175562880. 309171337.
+##  6 Christopher Nolan  1813227576 226653447  196667606. 187224133.
+##  7 George Lucas       1741418480 348283696  380262555  146193880.
+##  8 Robert Zemeckis    1619309108 124562239. 100853835   91300279.
+##  9 Clint Eastwood     1378321100  72543216.  46700000   75487408.
+## 10 Francis Lawrence   1358501971 271700394. 281666058  135437020.
+## 11 Ron Howard         1335988092 111332341  101587923   81933761.
+## 12 Gore Verbinski     1329600995 189942999. 123207194  154473822.
+## 13 Andrew Adamson     1137446920 284361730  279680930. 120895765.
+## 14 Shawn Levy         1129750988 102704635.  85463309   65484773.
+## 15 Ridley Scott       1128857598  80632686.  47775715   68812285.</code></pre>
+<ul>
+<li>Finally, ratings. Produce a table that describes how ratings are distributed by genre. We don’t want just the mean, but also, min, max, median, SD and some kind of a histogram or density graph that visually shows how ratings are distributed.</li>
+</ul>
+<pre class="r"><code># TABLE WITH SUMMARY STATISTICS
+movies %&gt;% 
+  group_by(genre) %&gt;% 
+  summarise(mean_rating  = mean(rating), 
+            min_rating   = min(rating),
+            max_rating   = max(rating),
+            med_rating   = median(rating),
+            sd_rating    = sd(rating))</code></pre>
+<pre><code>## # A tibble: 17 × 6
+##    genre       mean_rating min_rating max_rating med_rating sd_rating
+##    &lt;chr&gt;             &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;
+##  1 Action             6.23        2.1        9         6.3      1.03 
+##  2 Adventure          6.51        2.3        8.6       6.6      1.09 
+##  3 Animation          6.65        4.5        8         6.9      0.968
+##  4 Biography          7.11        4.5        8.9       7.2      0.760
+##  5 Comedy             6.11        1.9        8.8       6.2      1.02 
+##  6 Crime              6.92        4.8        9.3       6.9      0.849
+##  7 Documentary        6.66        1.6        8.5       7.4      1.77 
+##  8 Drama              6.73        2.1        8.8       6.8      0.917
+##  9 Family             6.5         5.7        7.9       5.9      1.22 
+## 10 Fantasy            6.15        4.3        7.9       6.45     0.959
+## 11 Horror             5.83        3.6        8.5       5.9      1.01 
+## 12 Musical            6.75        6.3        7.2       6.75     0.636
+## 13 Mystery            6.86        4.6        8.5       6.9      0.882
+## 14 Romance            6.65        6.2        7.1       6.65     0.636
+## 15 Sci-Fi             6.66        5          8.2       6.4      1.09 
+## 16 Thriller           4.8         4.8        4.8       4.8     NA    
+## 17 Western            5.7         4.1        7.3       5.7      2.26</code></pre>
+<pre class="r"><code>movies %&gt;% 
+  ggplot(aes(x = rating, color = genre, fill = genre)) +
+  geom_density(size=1, alpha = .1) +
+  theme_minimal() +
+  facet_wrap(~genre) +
+  labs(
+    title=&quot;Ratings density by Genre&quot;,
+    subtitle=&quot;IMDB Movies Dataset&quot;,
+    caption = &quot;Source: Kaggle IMDB 5000 movie dataset&quot;,
+    x=&quot;Rating&quot;,
+    y=&quot;% Density&quot;
+    ) +
+  theme(legend.position = &quot;none&quot;)</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/unnamed-chunk-8-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+<div id="use-ggplot-to-answer-the-following" class="section level2">
+<h2>Use <code>ggplot</code> to answer the following</h2>
+<ul>
+<li>Examine the relationship between <code>gross</code> and <code>cast_facebook_likes</code>. Produce a scatterplot and write one sentence discussing whether the number of facebook likes that the cast has received is likely to be a good predictor of how much money a movie will make at the box office. What variable are you going to map to the Y- and X- axes?</li>
+</ul>
+<pre class="r"><code>movies %&gt;% 
+  ggplot(aes(x=cast_facebook_likes, y=gross)) + 
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;) +
+  scale_x_continuous(limits = c(0, 150000)) + 
+  theme_minimal() +
+  labs(
+    title=&quot;Relationship between Facebook Likes and Gross Profit&quot;,
+    subtitle=&quot;IMDB Movies Dataset&quot;,
+    caption = &quot;Source: Kaggle IMDB 5000 movie dataset&quot;,
+    x=&quot;Cast movie likes&quot;,
+    y=&quot;Gross profit ($M)&quot;
+    ) + NULL</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/gross_on_fblikes-1.png" width="648" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>We chose to plot Cast Facebook likes on the X axes, Gross on the Y axes. The number of case facebook likes is not a good predictor as there does not seem to be a discernible correlation between the two, our argument is supported by a linear fit that shows a small positive correlation, but not enough to be significant. It is important to note that we have cut three outliers by limiting the x axis, as it did not help in visualizing the general tendency of the data.</p>
+</blockquote>
+<ul>
+<li>Examine the relationship between <code>gross</code> and <code>budget</code>. Produce a scatterplot and write one sentence discussing whether budget is likely to be a good predictor of how much money a movie will make at the box office.</li>
+</ul>
+<pre class="r"><code>ggplot(movies, aes(x= budget, y = gross))+
+  geom_point()+geom_smooth(method=lm)+ 
+  theme_minimal() +
+  labs(
+    title=&quot;Relationship between Budget and Gross Profit&quot;,
+    subtitle=&quot;IMDB Movies Dataset&quot;,
+    caption = &quot;Source: Kaggle IMDB 5000 movie dataset&quot;,
+    x=&quot;Movie budget ($M)&quot;,
+    y=&quot;Gross profit ($M)&quot;
+    ) + NULL</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/gross_on_budget-1.png" width="648" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>Budget is a good predictor of how much money a movie will make, as is shown by the positive correlation between the two.</p>
+</blockquote>
+<ul>
+<li>Examine the relationship between <code>gross</code> and <code>rating</code>. Produce a scatterplot, faceted by <code>genre</code> and discuss whether IMDB ratings are likely to be a good predictor of how much money a movie will make at the box office. Is there anything strange in this dataset?</li>
+</ul>
+<pre class="r"><code>ggplot(movies, aes(x= rating, y = gross))+
+  facet_wrap(vars(genre))+
+  geom_point()+geom_smooth(method=lm)+ 
+  theme_minimal() +
+  labs(
+    title=&quot;Relationship between Rating and Gross Profit&quot;,
+    subtitle=&quot;IMDB Movies Dataset&quot;,
+    caption = &quot;Source: Kaggle IMDB 5000 movie dataset&quot;,
+    x=&quot;Movie Rating&quot;,
+    y=&quot;Gross profit ($M)&quot;
+    ) + NULL</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/gross_on_rating-1.png" width="648" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>It is not a good predictor, as there is no significant relation between the movie rating and gross profit within most of the categories. The data set does not include enough data for genres such as sci-fi or family to determine a correlation between the gross and rating.</p>
+</blockquote>
+</div>
+</div>
+<div id="returns-of-financial-stocks" class="section level1">
+<h1>Returns of financial stocks</h1>
+<pre class="r"><code>nyse &lt;- read_csv(here::here(&quot;data&quot;,&quot;nyse.csv&quot;))</code></pre>
+<p>Based on this dataset, create a table and a bar plot that shows the number of companies per sector, in descending order</p>
+<pre class="r"><code># TABLE OF COMPANIES PER SECTOR:
+nyse %&gt;% 
+  group_by(sector) %&gt;% 
+  summarise(count = count(sector)) %&gt;% 
+  arrange(desc(count)) -&gt; companies_per_sector
+
+# PRINT THE TABLE
+companies_per_sector</code></pre>
+<pre><code>## # A tibble: 12 × 2
+##    sector                count
+##    &lt;chr&gt;                 &lt;int&gt;
+##  1 Finance                  97
+##  2 Consumer Services        79
+##  3 Public Utilities         60
+##  4 Capital Goods            45
+##  5 Health Care              45
+##  6 Energy                   42
+##  7 Technology               40
+##  8 Basic Industries         39
+##  9 Consumer Non-Durables    31
+## 10 Miscellaneous            12
+## 11 Transportation           10
+## 12 Consumer Durables         8</code></pre>
+<pre class="r"><code># PLOT:
+companies_per_sector %&gt;% 
+  mutate(sector = fct_reorder(sector, count)) %&gt;% 
+  ggplot(aes(x=sector, y=count)) +
+  geom_col(fill=&quot;#001461&quot;) + 
+  theme_minimal() +
+  coord_flip() +
+  labs(
+    title=&quot;Number of companies per sector&quot;,
+    subtitle=&quot;NYSE Stock Data&quot;,
+    caption = &quot;Source: NYSE &amp; SP500&quot;,
+    x=NULL,
+    y=NULL
+  )</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/companies_per_sector_2-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>Next, let’s choose some stocks and their ticker symbols and download some data. You <strong>MUST</strong> choose 6 different stocks from the ones listed below; You should, however, add <code>SPY</code> which is the SP500 ETF (Exchange Traded Fund).</p>
+<pre class="r"><code># Notice the cache=TRUE argument inthe chunk options. Because getting data is time consuming, 
+# cache=TRUE means that once it downloads data, the chunk will not run again next time you knit your Rmd
+
+# We chose to delete DPZ
+myStocks &lt;- c(&quot;AAPL&quot;,&quot;JPM&quot;,&quot;DIS&quot;,&quot;ANF&quot;,&quot;TSLA&quot;,&quot;XOM&quot;,&quot;SPY&quot; ) %&gt;%
+  tq_get(get  = &quot;stock.prices&quot;,
+         from = &quot;2011-01-01&quot;,
+         to   = &quot;2022-08-31&quot;) %&gt;%
+  group_by(symbol) 
+
+glimpse(myStocks) # examine the structure of the resulting data frame</code></pre>
+<pre><code>## Rows: 20,545
+## Columns: 8
+## Groups: symbol [7]
+## $ symbol   &lt;chr&gt; &quot;AAPL&quot;, &quot;AAPL&quot;, &quot;AAPL&quot;, &quot;AAPL&quot;, &quot;AAPL&quot;, &quot;AAPL&quot;, &quot;AAPL&quot;, &quot;AAPL…
+## $ date     &lt;date&gt; 2011-01-03, 2011-01-04, 2011-01-05, 2011-01-06, 2011-01-07, …
+## $ open     &lt;dbl&gt; 11.6, 11.9, 11.8, 12.0, 11.9, 12.1, 12.3, 12.3, 12.3, 12.4, 1…
+## $ high     &lt;dbl&gt; 11.8, 11.9, 11.9, 12.0, 12.0, 12.3, 12.3, 12.3, 12.4, 12.4, 1…
+## $ low      &lt;dbl&gt; 11.6, 11.7, 11.8, 11.9, 11.9, 12.0, 12.1, 12.2, 12.3, 12.3, 1…
+## $ close    &lt;dbl&gt; 11.8, 11.8, 11.9, 11.9, 12.0, 12.2, 12.2, 12.3, 12.3, 12.4, 1…
+## $ volume   &lt;dbl&gt; 4.45e+08, 3.09e+08, 2.56e+08, 3.00e+08, 3.12e+08, 4.49e+08, 4…
+## $ adjusted &lt;dbl&gt; 10.05, 10.10, 10.18, 10.18, 10.25, 10.44, 10.42, 10.50, 10.54…</code></pre>
+<p>Financial performance analysis depend on returns; If I buy a stock today for 100 and I sell it tomorrow for 101.75, my one-day return, assuming no transaction costs, is 1.75%. So given the adjusted closing prices, our first step is to calculate daily and monthly returns.</p>
+<pre class="r"><code>#calculate daily returns
+myStocks_returns_daily &lt;- myStocks %&gt;%
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn, 
+               period     = &quot;daily&quot;, 
+               type       = &quot;log&quot;,
+               col_rename = &quot;daily_returns&quot;,
+               cols = c(nested.col))  
+
+#calculate monthly  returns
+myStocks_returns_monthly &lt;- myStocks %&gt;%
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn, 
+               period     = &quot;monthly&quot;, 
+               type       = &quot;arithmetic&quot;,
+               col_rename = &quot;monthly_returns&quot;,
+               cols = c(nested.col)) 
+
+#calculate yearly returns
+myStocks_returns_annual &lt;- myStocks %&gt;%
+  group_by(symbol) %&gt;%
+  tq_transmute(select     = adjusted, 
+               mutate_fun = periodReturn, 
+               period     = &quot;yearly&quot;, 
+               type       = &quot;arithmetic&quot;,
+               col_rename = &quot;yearly_returns&quot;,
+               cols = c(nested.col))</code></pre>
+<p>Create a table where you summarise monthly returns for each of the stocks and <code>SPY</code>; min, max, median, mean, SD.</p>
+<pre class="r"><code>myStocks_returns_monthly %&gt;% 
+  group_by(symbol) %&gt;% 
+  summarise(min_return = min(monthly_returns),
+            max_return = max(monthly_returns),
+            med_return = median(monthly_returns),
+            avg_return = mean(monthly_returns),
+            sd_return  = sd(monthly_returns))</code></pre>
+<pre><code>## # A tibble: 7 × 6
+##   symbol min_return max_return med_return avg_return sd_return
+##   &lt;chr&gt;       &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;
+## 1 AAPL       -0.181      0.217    0.0230     0.0230     0.0791
+## 2 ANF        -0.421      0.507    0.00105    0.00337    0.146 
+## 3 DIS        -0.186      0.234    0.00725    0.0113     0.0721
+## 4 JPM        -0.229      0.202    0.0199     0.0119     0.0727
+## 5 SPY        -0.125      0.127    0.0146     0.0106     0.0404
+## 6 TSLA       -0.224      0.811    0.0117     0.0501     0.177 
+## 7 XOM        -0.262      0.241    0.00373    0.00756    0.0697</code></pre>
+<p>Plot a density plot, using <code>geom_density()</code>, for each of the stocks</p>
+<pre class="r"><code>myStocks_returns_monthly %&gt;% 
+  ggplot(aes(x = monthly_returns, color = symbol, fill = symbol)) +
+  geom_density(size=2, alpha = .1) +
+  theme_minimal() +
+  labs(
+    title=&quot;Returns by Symbol - Density Plot&quot;,
+    subtitle=&quot;NYSE Stock Data&quot;,
+    caption = &quot;Source: NYSE &amp; SP500&quot;,
+    x=&quot;Monthly Return&quot;,
+    y=&quot;% Density&quot;
+    )</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/density_monthly_returns-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>What can you infer from this plot? Which stock is the riskiest? The least risky?</p>
+<p>TSLA stock seems to have its median in negative returns, it also is the most variable of the stocks, making it the riskiest of all. A close second is ANF, which has a similar density to TSLA, but with a slightly positive median.</p>
+<p>The S&amp;P500 index has clearly the least risky performance, so an investor could choose to invest in ETFs that mimic the S&amp;P500. Another safe stock is JPM, which has a positive median return, and most of its density is positive as well. It also has very low variance.</p>
+<p>Finally, make a plot that shows the expected monthly return (mean) of a stock on the Y axis and the risk (standard deviation) in the X-axis. Please use <code>ggrepel::geom_text_repel()</code> to label each stock</p>
+<pre class="r"><code>myStocks_returns_monthly %&gt;%
+  group_by(symbol) %&gt;% 
+  summarise(mean_return = mean(monthly_returns), sd_return = sd(monthly_returns)) %&gt;% 
+  ggplot(aes(x = mean_return, y = sd_return,  color = symbol, fill = symbol)) +
+         geom_point(size=10, alpha=.5) + 
+         theme_minimal() +
+  labs(
+    title=&quot;Mean VS Standard Deviation Scatterplot&quot;,
+    subtitle=&quot;NYSE Stock Data&quot;,
+    caption = &quot;Source: NYSE &amp; SP500&quot;,
+    x=&quot;Mean of Return&quot;,
+    y=&quot;Standard Deviation of Return&quot;
+  )</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/risk_return_plot-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>What can you infer from this plot? Are there any stocks which, while being riskier, do not have a higher expected return?</p>
+<blockquote>
+<p>This plot confirms our previous findings from the density plot. TSLA is the most risky option with possibly highest returns. ANF is also a very risky stock, but with low returns, so investors should avoid this stock since others offer better mean returns with less risk. SPY however is the least risky investment with low expected return.</p>
+</blockquote>
+</div>
+<div id="on-your-own-spotify" class="section level1">
+<h1>On your own: Spotify</h1>
+<p>Spotify have an API, an Application Programming Interface. APIs are ways for computer programs to talk to each other. So while we use Spotify app to look up songs and artists, computers use the Spotify API to talk to the spotify server. There is an R package that allows R to talk to this API: <a href="https://www.rcharlie.com/spotifyr/"><code>spotifyr</code></a>. One of your team members, need to sign up and get a <a href="https://developer.spotify.com/dashboard/">Spotify developer account</a> and then you can download data about one’s Spotify usage. A detailed article on how to go about it can be found here <a href="https://towardsdatascience.com/explore-your-activity-on-spotify-with-r-and-spotifyr-how-to-analyze-and-visualize-your-stream-dee41cb63526">Explore your activity on Spotify with R and <em>spotifyr</em></a></p>
+<p>If you do not want to use the API, you can download a sample of over 32K songs by having a look at <a href="https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-01-21/readme.md" class="uri">https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-01-21/readme.md</a></p>
+<pre class="r"><code>spotify_songs &lt;- readr::read_csv(&#39;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-01-21/spotify_songs.csv&#39;)</code></pre>
+<p>The data dictionary can be found below</p>
+<table>
+<colgroup>
+<col width="23%" />
+<col width="23%" />
+<col width="53%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><strong>variable</strong></th>
+<th><strong>class</strong></th>
+<th><strong>description</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>track_id</td>
+<td>character</td>
+<td>Song unique ID</td>
+</tr>
+<tr class="even">
+<td>track_name</td>
+<td>character</td>
+<td>Song Name</td>
+</tr>
+<tr class="odd">
+<td>track_artist</td>
+<td>character</td>
+<td>Song Artist</td>
+</tr>
+<tr class="even">
+<td>track_popularity</td>
+<td>double</td>
+<td>Song Popularity (0-100) where higher is better</td>
+</tr>
+<tr class="odd">
+<td>track_album_id</td>
+<td>character</td>
+<td>Album unique ID</td>
+</tr>
+<tr class="even">
+<td>track_album_name</td>
+<td>character</td>
+<td>Song album name</td>
+</tr>
+<tr class="odd">
+<td>track_album_release_date</td>
+<td>character</td>
+<td>Date when album released</td>
+</tr>
+<tr class="even">
+<td>playlist_name</td>
+<td>character</td>
+<td>Name of playlist</td>
+</tr>
+<tr class="odd">
+<td>playlist_id</td>
+<td>character</td>
+<td>Playlist ID</td>
+</tr>
+<tr class="even">
+<td>playlist_genre</td>
+<td>character</td>
+<td>Playlist genre</td>
+</tr>
+<tr class="odd">
+<td>playlist_subgenre</td>
+<td>character</td>
+<td>Playlist subgenre</td>
+</tr>
+<tr class="even">
+<td>danceability</td>
+<td>double</td>
+<td>Danceability describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity. A value of 0.0 is least danceable and 1.0 is most danceable.</td>
+</tr>
+<tr class="odd">
+<td>energy</td>
+<td>double</td>
+<td>Energy is a measure from 0.0 to 1.0 and represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach prelude scores low on the scale. Perceptual features contributing to this attribute include dynamic range, perceived loudness, timbre, onset rate, and general entropy.</td>
+</tr>
+<tr class="even">
+<td>key</td>
+<td>double</td>
+<td>The estimated overall key of the track. Integers map to pitches using standard Pitch Class notation . E.g. 0 = C, 1 = C♯/D♭, 2 = D, and so on. If no key was detected, the value is -1.</td>
+</tr>
+<tr class="odd">
+<td>loudness</td>
+<td>double</td>
+<td>The overall loudness of a track in decibels (dB). Loudness values are averaged across the entire track and are useful for comparing relative loudness of tracks. Loudness is the quality of a sound that is the primary psychological correlate of physical strength (amplitude). Values typical range between -60 and 0 db.</td>
+</tr>
+<tr class="even">
+<td>mode</td>
+<td>double</td>
+<td>Mode indicates the modality (major or minor) of a track, the type of scale from which its melodic content is derived. Major is represented by 1 and minor is 0.</td>
+</tr>
+<tr class="odd">
+<td>speechiness</td>
+<td>double</td>
+<td>Speechiness detects the presence of spoken words in a track. The more exclusively speech-like the recording (e.g. talk show, audio book, poetry), the closer to 1.0 the attribute value. Values above 0.66 describe tracks that are probably made entirely of spoken words. Values between 0.33 and 0.66 describe tracks that may contain both music and speech, either in sections or layered, including such cases as rap music. Values below 0.33 most likely represent music and other non-speech-like tracks.</td>
+</tr>
+<tr class="even">
+<td>acousticness</td>
+<td>double</td>
+<td>A confidence measure from 0.0 to 1.0 of whether the track is acoustic. 1.0 represents high confidence the track is acoustic.</td>
+</tr>
+<tr class="odd">
+<td>instrumentalness</td>
+<td>double</td>
+<td>Predicts whether a track contains no vocals. “Ooh” and “aah” sounds are treated as instrumental in this context. Rap or spoken word tracks are clearly “vocal”. The closer the instrumentalness value is to 1.0, the greater likelihood the track contains no vocal content. Values above 0.5 are intended to represent instrumental tracks, but confidence is higher as the value approaches 1.0.</td>
+</tr>
+<tr class="even">
+<td>liveness</td>
+<td>double</td>
+<td>Detects the presence of an audience in the recording. Higher liveness values represent an increased probability that the track was performed live. A value above 0.8 provides strong likelihood that the track is live.</td>
+</tr>
+<tr class="odd">
+<td>valence</td>
+<td>double</td>
+<td>A measure from 0.0 to 1.0 describing the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).</td>
+</tr>
+<tr class="even">
+<td>tempo</td>
+<td>double</td>
+<td>The overall estimated tempo of a track in beats per minute (BPM). In musical terminology, tempo is the speed or pace of a given piece and derives directly from the average beat duration.</td>
+</tr>
+<tr class="odd">
+<td>duration_ms</td>
+<td>double</td>
+<td>Duration of song in milliseconds</td>
+</tr>
+</tbody>
+</table>
+<p>In this dataset, there are only 6 types of <code>playlist_genre</code> , but we can still try to perform EDA on this dataset.</p>
+<p>Produce a one-page summary describing this dataset. Here is a non-exhaustive list of questions:</p>
+<ol style="list-style-type: decimal">
+<li><p>What is the distribution of songs’ popularity (<code>track_popularity</code>). Does it look like a Normal distribution?</p>
+<p>It looks not like a standard normal distribution with very high frequency when track_popularity is close to 0.</p></li>
+</ol>
+<pre class="r"><code>count_track_popularity &lt;- spotify_songs %&gt;%
+  select(track_name, track_popularity) %&gt;%
+   group_by(track_popularity) %&gt;%
+   summarize(count=n()) 
+# %&gt;%
+count_track_popularity</code></pre>
+<pre><code>## # A tibble: 101 × 2
+##    track_popularity count
+##               &lt;dbl&gt; &lt;int&gt;
+##  1                0  2703
+##  2                1   575
+##  3                2   387
+##  4                3   321
+##  5                4   240
+##  6                5   240
+##  7                6   192
+##  8                7   189
+##  9                8   201
+## 10                9   195
+## # … with 91 more rows</code></pre>
+<pre class="r"><code>  ggplot(data=count_track_popularity, aes(x=track_popularity, y=count)) +
+   geom_col() +
+  labs(
+    title=&quot;Track Popularity&quot;,
+    x=&quot;Track Popularity&quot;,
+    y=NULL
+  )</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/song_popularity-1.png" width="648" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>The distribution of song popularity does not resemble a normal distribution. The graph appears to present two different maxima. It appears that a vast majority of songs have no popularity, but once songs gain some traction they tend to group around a “normal distribution” with mean ~55.</p>
+</blockquote>
+<ol start="2" style="list-style-type: decimal">
+<li><p>There are 12 <a href="https://developer.spotify.com/documentation/web-api/reference/object-model/#audio-features-object">audio features</a> for each track, including confidence measures like <code>acousticness</code>, <code>liveness</code>, <code>speechines</code>and <code>instrumentalness</code>, perceptual measures like <code>energy</code>, <code>loudness</code>, <code>danceability</code> and <code>valence</code> (positiveness), and descriptors like <code>duration</code>, <code>tempo</code>, <code>key</code>, and <code>mode</code>. How are they distributed? can you roughly guess which of these variables is closer to Normal just by looking at summary statistics?</p>
+<p>According to our visualization, the audio features are not normally distributed with features of liveness and speechines.</p></li>
+</ol>
+<pre class="r"><code>library(GGally)
+
+spotify_songs %&gt;% 
+  select(12:23) %&gt;% 
+  GGally::ggpairs() +
+  theme_minimal(base_size = 8)</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/audio_features_distribution-1.png" width="648" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>The distribution is visualised as above.Variables “danceability”, “energy”, “valence”,“duration_ms” are closer to normal distribution.</p>
+</blockquote>
+<ol start="4" style="list-style-type: decimal">
+<li>Is there any relationship between <code>valence</code> and <code>track_popularity</code>? <code>danceability</code> and <code>track_popularity</code> ?</li>
+</ol>
+<pre class="r"><code># valence and track_popularity
+
+ggplot(data=spotify_songs, aes(x=valence, y=track_popularity)) +
+  geom_point(size=1, alpha=.4,color=&quot;#001461&quot;) +
+  geom_smooth(method = &quot;lm&quot;, color=&quot;red&quot;) +
+  labs(
+    title=&quot;Relation between Valence and Track Popularity&quot;,
+    x = &quot;Valence&quot;,
+    y = &quot;Track Popularity&quot;,
+  ) +
+  theme_minimal()</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/track_popularity_relations-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>ggplot(data=spotify_songs, aes(x=danceability, y=track_popularity)) +
+  geom_point(size=1, alpha=.4, color=&quot;#001461&quot;) +
+  geom_smooth(method = &quot;lm&quot;, color=&quot;red&quot;) +
+  labs(
+    title=&quot;Relation between Danceability and Track Popularity&quot;,
+    x = &quot;Danceability&quot;,
+    y = &quot;Track Popularity&quot;,
+  ) +
+  theme_minimal()</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/track_popularity_relations-2.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>spotify_songs</code></pre>
+<pre><code>## # A tibble: 32,833 × 23
+##    track_id      track…¹ track…² track…³ track…⁴ track…⁵ track…⁶ playl…⁷ playl…⁸
+##    &lt;chr&gt;         &lt;chr&gt;   &lt;chr&gt;     &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  
+##  1 6f807x0ima9a… I Don&#39;… Ed She…      66 2oCs0D… I Don&#39;… 2019-0… Pop Re… 37i9dQ…
+##  2 0r7CVbZTWZgb… Memori… Maroon…      67 63rPSO… Memori… 2019-1… Pop Re… 37i9dQ…
+##  3 1z1Hg7Vb0AhH… All th… Zara L…      70 1HoSmj… All th… 2019-0… Pop Re… 37i9dQ…
+##  4 75FpbthrwQmz… Call Y… The Ch…      60 1nqYsO… Call Y… 2019-0… Pop Re… 37i9dQ…
+##  5 1e8PAfcKUYoK… Someon… Lewis …      69 7m7vv9… Someon… 2019-0… Pop Re… 37i9dQ…
+##  6 7fvUMiyapMsR… Beauti… Ed She…      67 2yiy9c… Beauti… 2019-0… Pop Re… 37i9dQ…
+##  7 2OAylPUDDfwR… Never … Katy P…      62 7INHYS… Never … 2019-0… Pop Re… 37i9dQ…
+##  8 6b1RNvAcJjQH… Post M… Sam Fe…      69 6703SR… Post M… 2019-0… Pop Re… 37i9dQ…
+##  9 7bF6tCO3gFb8… Tough … Avicii       68 7CvAfG… Tough … 2019-0… Pop Re… 37i9dQ…
+## 10 1IXGILkPm0tO… If I C… Shawn …      67 4Qxzbf… If I C… 2019-0… Pop Re… 37i9dQ…
+## # … with 32,823 more rows, 14 more variables: playlist_genre &lt;chr&gt;,
+## #   playlist_subgenre &lt;chr&gt;, danceability &lt;dbl&gt;, energy &lt;dbl&gt;, key &lt;dbl&gt;,
+## #   loudness &lt;dbl&gt;, mode &lt;dbl&gt;, speechiness &lt;dbl&gt;, acousticness &lt;dbl&gt;,
+## #   instrumentalness &lt;dbl&gt;, liveness &lt;dbl&gt;, valence &lt;dbl&gt;, tempo &lt;dbl&gt;,
+## #   duration_ms &lt;dbl&gt;, and abbreviated variable names ¹​track_name,
+## #   ²​track_artist, ³​track_popularity, ⁴​track_album_id, ⁵​track_album_name,
+## #   ⁶​track_album_release_date, ⁷​playlist_name, ⁸​playlist_id</code></pre>
+<blockquote>
+<p>There seems to be no apparent relationship between valence and track_popularity, and no relationship between danceability and track_popularity based on our scatter plots. The line of best fit supports our findings.</p>
+</blockquote>
+<ol start="5" style="list-style-type: decimal">
+<li><code>mode</code> indicates the modality (major or minor) of a track, the type of scale from which its melodic content is derived. Major is represented by 1 and minor is 0. Do songs written on a major scale have higher <code>danceability</code> compared to those in minor scale? What about <code>track_popularity</code>?</li>
+</ol>
+<pre class="r"><code># danceability
+
+spotify_songs %&gt;%
+  group_by(mode) %&gt;%
+  summarize(median_danceability = median(danceability)) %&gt;%
+   ggplot(aes(x=mode, y=median_danceability, fill=mode)) +
+   geom_col() +
+  theme(legend.position = &quot;none&quot;) +
+  labs(
+    title=&quot;Measure of Danceability with respect to Modality&quot;,
+    x = &quot;Modality&quot;,
+    y = &quot;Median Danceability&quot;
+  )</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/differentiating_between_modes-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># track_popularity 
+
+spotify_songs %&gt;%
+group_by(mode) %&gt;%
+summarize(median_track_popularity = median(track_popularity)) %&gt;%
+  ggplot(aes(x=mode, y=median_track_popularity, fill=mode)) +
+  geom_col() +
+  theme(legend.position = &quot;none&quot;) +
+  labs(
+    title=&quot;Measure of Track Popularity with respect to Modality&quot;,
+    x = &quot;Modality&quot;,
+    y = &quot;Median Track Popularity&quot;
+  )</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/differentiating_between_modes-2.png" width="648" style="display: block; margin: auto;" /></p>
+<blockquote>
+<p>Songs written on a major scale have lower danceability compared to it in minor scale. However, songs written on a major scale have higher track_popularity compared to it in minor scale.</p>
+</blockquote>
+</div>
+<div id="challenge-1-replicating-a-chart" class="section level1">
+<h1>Challenge 1: Replicating a chart</h1>
+<p>The purpose of this exercise is to reproduce a plot using your <code>dplyr</code> and <code>ggplot2</code> skills. It builds on exercise 1, the San Francisco rentals data.</p>
+<p>You have to create a graph that calculates the cumulative % change for 0-, 1-1, and 2-bed flats between 2000 and 2018 for the top twelve cities in Bay Area, by number of ads that appeared in Craigslist.</p>
+<pre class="r"><code>list_of_top_12_cities=rent %&gt;% 
+  count(city, sort=TRUE) %&gt;% 
+  mutate(prop = n/sum(n)) %&gt;% 
+  slice_max(prop, n=12) %&gt;% 
+  mutate(city = fct_reorder(city, prop))
+
+list_of_rent_for_top_12_cities=
+  left_join(list_of_top_12_cities,rent,by=&quot;city&quot;)
+
+
+by_city_year &lt;- list_of_rent_for_top_12_cities %&gt;% 
+  filter(beds&lt;=2) %&gt;% 
+  group_by(beds,city,year) %&gt;% 
+  summarize(median_price=median(price))
+  
+pct_change &lt;- by_city_year %&gt;% 
+  # SUGESTED BY KOSTIS:
+  # mutate(
+  #   delta = median_price/ lag(median_price),
+  #   delta = ifelse(is.na(delta),1,delta),
+  #   cumulative_delta = cumprod(delta)
+  # ) %&gt;% 
+  
+  # OUR ATTEMPT:
+  mutate(lag.value = dplyr::lag(median_price, n = 1, default = NA)) %&gt;% 
+  mutate(pct_change = case_when(is.na(lag.value) ~ 1, lag.value&gt;0 ~ median_price/lag.value)) %&gt;% 
+  mutate(cum_prod = cumprod(pct_change)) %&gt;% 
+  mutate(cum_prod = cum_prod)
+
+pct_change %&gt;% 
+  ggplot(aes(x=year,y=cum_prod, color=city))+
+  geom_line()+
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1)) +
+   labs(title=&#39;Cumulative % change in 0, 1 and 2-bed rentals in Bay Area&#39;, subtitle=&#39;2000-2018&#39;, x=&quot;&quot;, y=&quot;&quot;) +
+  theme(legend.position = &quot;none&quot;, axis.text.x = element_text(angle = 90)) +
+  facet_grid(vars(beds),vars(city))</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/challenge1-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+<div id="challenge-2-2016-california-contributors-plots" class="section level1">
+<h1>Challenge 2: 2016 California Contributors plots</h1>
+<p>As discussed in class, I would like you to reproduce the plot that shows the top ten cities in highest amounts raised in political contributions in California during the 2016 US Presidential election.</p>
+<p><img src="../../images/challenge2.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>To get this plot, you must join two dataframes; the one you have with all contributions, and data that can translate zipcodes to cities. You can find a file with all US zipcodes, e.g., here <a href="http://www.uszipcodelist.com/download.html" class="uri">http://www.uszipcodelist.com/download.html</a>.</p>
+<p>The easiest way would be to create two plots and then place one next to each other. For this, you will need the <code>patchwork</code> package. <a href="https://cran.r-project.org/web/packages/patchwork/index.html" class="uri">https://cran.r-project.org/web/packages/patchwork/index.html</a></p>
+<p>While this is ok, what if one asked you to create the same plot for the top 10 candidates and not just the top two? The most challenging part is how to reorder within categories, and for this you will find Julia Silge’s post on <a href="https://juliasilge.com/blog/reorder-within/">REORDERING AND FACETTING FOR GGPLOT2</a> useful.</p>
+<pre class="r"><code># Make sure you use vroom() as it is significantly faster than read.csv()
+CA_contributors_2016 &lt;- vroom::vroom(here::here(&quot;data&quot;,&quot;CA_contributors_2016.csv&quot;))
+
+zip_codes_us &lt;- vroom::vroom(here::here(&quot;data&quot;,&quot;zip_code_database.csv&quot;))</code></pre>
+<pre class="r"><code>CA_contributors_t_and_h &lt;- # TRUMP AND HILLARY DATA
+  CA_contributors_2016 %&gt;% 
+  filter(cand_nm %in% c(&#39;Clinton, Hillary Rodham&#39;, &#39;Trump, Donald J.&#39;)) %&gt;% 
+  mutate(zip = as.character(zip)) %&gt;% # MAKING SURE THEY HAVE THE SAME TYPE
+  left_join(zip_codes_us, by=&quot;zip&quot;)
+
+library(tidytext)
+CA_contributors_t_and_h %&gt;% 
+  group_by(cand_nm,primary_city) %&gt;% 
+  summarise(total_contrib = sum(contb_receipt_amt)) %&gt;% 
+  ungroup %&gt;% 
+  group_by(cand_nm) %&gt;% 
+  top_n(10) %&gt;% 
+  ungroup %&gt;% 
+  mutate(candidate = as.factor(cand_nm), 
+         city = reorder_within(primary_city, total_contrib, candidate)) %&gt;% 
+  ggplot(aes(city, total_contrib, fill=candidate)) + 
+    geom_col(show.legend = FALSE) +
+    facet_wrap(~candidate, scales = &quot;free&quot;) +
+    coord_flip() +
+    scale_x_reordered() + 
+    scale_y_continuous(expand = c(0,0), labels = scales::dollar) +
+    scale_fill_manual(values=c(&quot;#00AEF3&quot;, &quot;#E81B23&quot;)) +
+    theme_minimal() +
+    labs(
+      title=&quot;Where did candidates raise more money?&quot;,
+      subtitle = &quot;2016 Elections Contributions&quot;,
+      caption = &quot;Source: 2016 US Presidential elections database&quot;,
+      y = &quot;Amount raised ($)&quot;,
+      x = NULL
+    )</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/unnamed-chunk-9-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>If we were to plot 10 top candidates, this is how we would approach the code:</p>
+<pre class="r"><code># TOP 10 CANDIDATES SEARCH:
+top_10_candidates &lt;-
+  CA_contributors_2016 %&gt;% 
+    group_by(cand_nm) %&gt;% 
+    summarise(total_contrib = sum(contb_receipt_amt)) %&gt;% 
+    slice_max(total_contrib, n=10)
+
+# FILTER BY TOP TEN CANDIDATES WITH JOIN:
+CA_contributors_top10 &lt;- 
+  left_join(top_10_candidates, CA_contributors_2016, by=&quot;cand_nm&quot;) %&gt;% 
+  mutate(zip = as.character(zip)) %&gt;% # MAKING SURE THEY HAVE THE SAME TYPE
+  left_join(zip_codes_us, by=&quot;zip&quot;)
+
+CA_contributors_top10 %&gt;% 
+  group_by(cand_nm,primary_city) %&gt;% 
+  summarise(total_contrib = sum(contb_receipt_amt)) %&gt;% 
+  ungroup %&gt;% 
+  group_by(cand_nm) %&gt;% 
+  top_n(10) %&gt;% 
+  ungroup %&gt;% 
+  mutate(candidate = as.factor(cand_nm), 
+         city = reorder_within(primary_city, total_contrib, candidate)) %&gt;% 
+  ggplot(aes(city, total_contrib, fill=candidate)) + 
+    geom_col(show.legend = FALSE) +
+    facet_wrap(~candidate, scales = &quot;free&quot;) +
+    coord_flip() +
+    scale_x_reordered() + 
+    scale_y_continuous(expand = c(0,0), labels = scales::dollar) +
+    theme_minimal() +
+    labs(
+      title=&quot;Where did candidates raise more money?&quot;,
+      subtitle = &quot;2016 Elections Contributions&quot;,
+      caption = &quot;Source: 2016 US Presidential elections database&quot;,
+      y = &quot;Amount raised ($)&quot;,
+      x = NULL
+    )</code></pre>
+<p><img src="/blogs/homework1_files/figure-html/unnamed-chunk-10-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+<div id="deliverables" class="section level1">
+<h1>Deliverables</h1>
+<p>There is a lot of explanatory text, comments, etc. You do not need these, so delete them and produce a stand-alone document that you could share with someone. Knit the edited and completed R Markdown file as an HTML document (use the “Knit” button at the top of the script editor window) and upload it to Canvas.</p>
+</div>
+<div id="details" class="section level1">
+<h1>Details</h1>
+<ul>
+<li>Who did you collaborate with: Ishaan Khetan, Kathlyn Lee, Emilia Moskala, Juan Sanchez-Blanco, Sylvie Zheng, Jingyi Fang</li>
+<li>Approximately how much time did you spend on this problem set: 10h</li>
+<li>What, if anything, gave you the most trouble: Both challenges gave us the most trouble</li>
+</ul>
+<p><strong>Please seek out help when you need it,</strong> and remember the <a href="https://mam2022.netlify.app/syllabus/#the-15-minute-rule" target="_blank">15-minute rule</a>. You know enough R (and have enough examples of code from class and your readings) to be able to do this. If you get stuck, ask for help from others, post a question on Slack– and remember that I am here to help too!</p>
+<blockquote>
+<p>As a true test to yourself, do you understand the code you submitted and are you able to explain it to someone else?</p>
+<p>Yes</p>
+</blockquote>
+</div>
+<div id="rubric" class="section level1">
+<h1>Rubric</h1>
+<p>Check minus (1/5): Displays minimal effort. Doesn’t complete all components. Code is poorly written and not documented. Uses the same type of plot for each graph, or doesn’t use plots appropriate for the variables being analyzed.</p>
+<p>Check (3/5): Solid effort. Hits all the elements. No clear mistakes. Easy to follow (both the code and the output).</p>
+<p>Check plus (5/5): Finished all components of the assignment correctly and addressed both challenges. Code is well-documented (both self-documented and with additional comments as necessary). Used tidyverse, instead of base R. Graphs and tables are properly labelled. Analysis is clear and easy to follow, either because graphs are labeled clearly or you’ve written additional text to describe how you interpret the output.</p>
+</div>

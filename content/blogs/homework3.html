@@ -1,0 +1,905 @@
+---
+
+date: "2022-09-20"
+output:
+  html_document:
+    theme: flatly
+    highlight: zenburn
+    number_sections: yes
+    toc: yes
+    toc_float: yes
+    code_folding: show
+---
+
+
+
+<hr />
+<p>date: “2022-09-20”
+output:
+html_document:
+theme: flatly
+highlight: zenburn
+number_sections: yes
+toc: yes
+toc_float: yes
+code_folding: show
+—</p>
+<div id="youth-risk-behavior-surveillance" class="section level1">
+<h1>Youth Risk Behavior Surveillance</h1>
+<p>Every two years, the Centers for Disease Control and Prevention conduct the <a href="https://www.cdc.gov/healthyyouth/data/yrbs/index.htm">Youth Risk Behavior Surveillance System (YRBSS)</a> survey, where it takes data from high schoolers (9th through 12th grade), to analyze health patterns. We are working with a random sample of observations for one of the years of the survey.</p>
+<div id="load-the-data" class="section level2">
+<h2>Load the data</h2>
+<p>We start by loading and glimpsing the data to get an idea of the variables we are working with.</p>
+<pre class="r"><code>data(yrbss)
+glimpse(yrbss)</code></pre>
+<pre><code>## Rows: 13,583
+## Columns: 13
+## $ age                      &lt;int&gt; 14, 14, 15, 15, 15, 15, 15, 14, 15, 15, 15, 1…
+## $ gender                   &lt;chr&gt; &quot;female&quot;, &quot;female&quot;, &quot;female&quot;, &quot;female&quot;, &quot;fema…
+## $ grade                    &lt;chr&gt; &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, &quot;9&quot;, …
+## $ hispanic                 &lt;chr&gt; &quot;not&quot;, &quot;not&quot;, &quot;hispanic&quot;, &quot;not&quot;, &quot;not&quot;, &quot;not&quot;…
+## $ race                     &lt;chr&gt; &quot;Black or African American&quot;, &quot;Black or Africa…
+## $ height                   &lt;dbl&gt; NA, NA, 1.73, 1.60, 1.50, 1.57, 1.65, 1.88, 1…
+## $ weight                   &lt;dbl&gt; NA, NA, 84.4, 55.8, 46.7, 67.1, 131.5, 71.2, …
+## $ helmet_12m               &lt;chr&gt; &quot;never&quot;, &quot;never&quot;, &quot;never&quot;, &quot;never&quot;, &quot;did not …
+## $ text_while_driving_30d   &lt;chr&gt; &quot;0&quot;, NA, &quot;30&quot;, &quot;0&quot;, &quot;did not drive&quot;, &quot;did not…
+## $ physically_active_7d     &lt;int&gt; 4, 2, 7, 0, 2, 1, 4, 4, 5, 0, 0, 0, 4, 7, 7, …
+## $ hours_tv_per_school_day  &lt;chr&gt; &quot;5+&quot;, &quot;5+&quot;, &quot;5+&quot;, &quot;2&quot;, &quot;3&quot;, &quot;5+&quot;, &quot;5+&quot;, &quot;5+&quot;,…
+## $ strength_training_7d     &lt;int&gt; 0, 0, 0, 0, 1, 0, 2, 0, 3, 0, 3, 0, 0, 7, 7, …
+## $ school_night_hours_sleep &lt;chr&gt; &quot;8&quot;, &quot;6&quot;, &quot;&lt;5&quot;, &quot;6&quot;, &quot;9&quot;, &quot;8&quot;, &quot;9&quot;, &quot;6&quot;, &quot;&lt;5&quot;…</code></pre>
+<pre class="r"><code>skimr::skim(yrbss)</code></pre>
+<table>
+<caption><span id="tab:unnamed-chunk-1">Table 1: </span>Data summary</caption>
+<tbody>
+<tr class="odd">
+<td align="left">Name</td>
+<td align="left">yrbss</td>
+</tr>
+<tr class="even">
+<td align="left">Number of rows</td>
+<td align="left">13583</td>
+</tr>
+<tr class="odd">
+<td align="left">Number of columns</td>
+<td align="left">13</td>
+</tr>
+<tr class="even">
+<td align="left">_______________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Column type frequency:</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td align="left">character</td>
+<td align="left">8</td>
+</tr>
+<tr class="odd">
+<td align="left">numeric</td>
+<td align="left">5</td>
+</tr>
+<tr class="even">
+<td align="left">________________________</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td align="left">Group variables</td>
+<td align="left">None</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: character</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col width="30%" />
+<col width="12%" />
+<col width="16%" />
+<col width="4%" />
+<col width="4%" />
+<col width="7%" />
+<col width="10%" />
+<col width="13%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">min</th>
+<th align="right">max</th>
+<th align="right">empty</th>
+<th align="right">n_unique</th>
+<th align="right">whitespace</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">gender</td>
+<td align="right">12</td>
+<td align="right">1.00</td>
+<td align="right">4</td>
+<td align="right">6</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">grade</td>
+<td align="right">79</td>
+<td align="right">0.99</td>
+<td align="right">1</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">hispanic</td>
+<td align="right">231</td>
+<td align="right">0.98</td>
+<td align="right">3</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">2</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">race</td>
+<td align="right">2805</td>
+<td align="right">0.79</td>
+<td align="right">5</td>
+<td align="right">41</td>
+<td align="right">0</td>
+<td align="right">5</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">helmet_12m</td>
+<td align="right">311</td>
+<td align="right">0.98</td>
+<td align="right">5</td>
+<td align="right">12</td>
+<td align="right">0</td>
+<td align="right">6</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">text_while_driving_30d</td>
+<td align="right">918</td>
+<td align="right">0.93</td>
+<td align="right">1</td>
+<td align="right">13</td>
+<td align="right">0</td>
+<td align="right">8</td>
+<td align="right">0</td>
+</tr>
+<tr class="odd">
+<td align="left">hours_tv_per_school_day</td>
+<td align="right">338</td>
+<td align="right">0.98</td>
+<td align="right">1</td>
+<td align="right">12</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">0</td>
+</tr>
+<tr class="even">
+<td align="left">school_night_hours_sleep</td>
+<td align="right">1248</td>
+<td align="right">0.91</td>
+<td align="right">1</td>
+<td align="right">3</td>
+<td align="right">0</td>
+<td align="right">7</td>
+<td align="right">0</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Variable type: numeric</strong></p>
+<table style="width:100%;">
+<colgroup>
+<col width="21%" />
+<col width="10%" />
+<col width="14%" />
+<col width="6%" />
+<col width="6%" />
+<col width="6%" />
+<col width="5%" />
+<col width="6%" />
+<col width="6%" />
+<col width="7%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">skim_variable</th>
+<th align="right">n_missing</th>
+<th align="right">complete_rate</th>
+<th align="right">mean</th>
+<th align="right">sd</th>
+<th align="right">p0</th>
+<th align="right">p25</th>
+<th align="right">p50</th>
+<th align="right">p75</th>
+<th align="right">p100</th>
+<th align="left">hist</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">age</td>
+<td align="right">77</td>
+<td align="right">0.99</td>
+<td align="right">16.16</td>
+<td align="right">1.26</td>
+<td align="right">12.00</td>
+<td align="right">15.0</td>
+<td align="right">16.00</td>
+<td align="right">17.00</td>
+<td align="right">18.00</td>
+<td align="left">▁▂▅▅▇</td>
+</tr>
+<tr class="even">
+<td align="left">height</td>
+<td align="right">1004</td>
+<td align="right">0.93</td>
+<td align="right">1.69</td>
+<td align="right">0.10</td>
+<td align="right">1.27</td>
+<td align="right">1.6</td>
+<td align="right">1.68</td>
+<td align="right">1.78</td>
+<td align="right">2.11</td>
+<td align="left">▁▅▇▃▁</td>
+</tr>
+<tr class="odd">
+<td align="left">weight</td>
+<td align="right">1004</td>
+<td align="right">0.93</td>
+<td align="right">67.91</td>
+<td align="right">16.90</td>
+<td align="right">29.94</td>
+<td align="right">56.2</td>
+<td align="right">64.41</td>
+<td align="right">76.20</td>
+<td align="right">180.99</td>
+<td align="left">▆▇▂▁▁</td>
+</tr>
+<tr class="even">
+<td align="left">physically_active_7d</td>
+<td align="right">273</td>
+<td align="right">0.98</td>
+<td align="right">3.90</td>
+<td align="right">2.56</td>
+<td align="right">0.00</td>
+<td align="right">2.0</td>
+<td align="right">4.00</td>
+<td align="right">7.00</td>
+<td align="right">7.00</td>
+<td align="left">▆▂▅▃▇</td>
+</tr>
+<tr class="odd">
+<td align="left">strength_training_7d</td>
+<td align="right">1176</td>
+<td align="right">0.91</td>
+<td align="right">2.95</td>
+<td align="right">2.58</td>
+<td align="right">0.00</td>
+<td align="right">0.0</td>
+<td align="right">3.00</td>
+<td align="right">5.00</td>
+<td align="right">7.00</td>
+<td align="left">▇▂▅▂▅</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="exploratory-data-analysis" class="section level2">
+<h2>Exploratory Data Analysis</h2>
+<p>We will analyse the weight variable and see if exercise influences the weight of participants. To start off, we can see from the skim table that there’s 1004 missing values in the column. The distribution of the remaining values can be seen in the histogram below. The distribution is skewed right, with a mean of 67.91 kilograms.</p>
+<pre class="r"><code>ggplot(yrbss) +
+  aes(x = weight) +
+  geom_histogram() +
+  theme_minimal()</code></pre>
+<p><img src="/blogs/homework3_files/figure-html/eda_on_weight-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>We consider the relationship between physical acitvity and weight. We will create a variable ‘physical_3plus’ that says whether a high schooler is physically active for at least 3 days a week. See below the number and % of students that are physically active. We have tested whether the count function and groupby-summarise give the same result for the count and the percentage, which is the case.</p>
+<pre class="r"><code>df_active &lt;- yrbss %&gt;%
+  drop_na(physically_active_7d) %&gt;%
+  mutate(physical_3plus = ifelse(physically_active_7d &gt; 2, &#39;yes&#39;,&#39;no&#39;) )
+
+groupby_active &lt;- df_active %&gt;%
+  group_by(physical_3plus) %&gt;%
+  summarise(nr_physical_3plus = n()) %&gt;%
+  mutate(perc_physical_3plus = nr_physical_3plus / sum(nr_physical_3plus))
+
+groupby_active</code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   physical_3plus nr_physical_3plus perc_physical_3plus
+##   &lt;chr&gt;                      &lt;int&gt;               &lt;dbl&gt;
+## 1 no                          4404               0.331
+## 2 yes                         8906               0.669</code></pre>
+<pre class="r"><code>count_active &lt;- df_active %&gt;%
+  count(physical_3plus) %&gt;%
+  mutate(perc_physical_3plus = n / sum(n))
+
+count_active</code></pre>
+<pre><code>## # A tibble: 2 × 3
+##   physical_3plus     n perc_physical_3plus
+##   &lt;chr&gt;          &lt;int&gt;               &lt;dbl&gt;
+## 1 no              4404               0.331
+## 2 yes             8906               0.669</code></pre>
+<p>We have calculated a 95% confidence interval for the proportion of high schoolers who are not active 3 or more days a week through bootstrapping with the infer package, which is 0.3 - 0.326. This means the majority of people are active 3+ days a week.</p>
+<pre class="r"><code>library(infer)
+
+ci_proportion_activity &lt;- df_active %&gt;% 
+  mutate(physical_3plus = factor(physical_3plus)) %&gt;%
+  specify(response = physical_3plus, success = &#39;no&#39;) %&gt;% 
+  generate(type = &#39;bootstrap&#39;, reps = 1000) %&gt;% 
+  calculate(stat = &#39;prop&#39;) %&gt;% 
+  get_confidence_interval(level = 0.95)
+
+ci_proportion_activity</code></pre>
+<pre><code>## # A tibble: 1 × 2
+##   lower_ci upper_ci
+##      &lt;dbl&gt;    &lt;dbl&gt;
+## 1    0.323    0.339</code></pre>
+<p>To analyse the relationship between weight and physical activity, we are plotting 2 boxplots, 1 for those who are physically active 3+ days a week and those who are not. We would have expected physical activity to be inversely correlated with weight, as activity generally makes you lose weight. However, it appears in the boxplots that this is not the case. To explain that physically active people are heavier, we can think of two things. Firstly, muscle is heavier than fat, and people who exercise often have more muscle. Secondly, people who are heavier might want to exercise more often to lose weight.</p>
+<pre class="r"><code>ggplot(df_active) + 
+  aes(x = physical_3plus, y = weight) +
+  geom_boxplot() +
+  labs(
+    title = &#39;Physical activity linked to higher average weight&#39;,
+    y = &#39;Weight&#39;,
+    x = &#39;Physically active 3+ days&#39;
+  ) +
+  coord_flip() </code></pre>
+<p><img src="/blogs/homework3_files/figure-html/boxplot-1.png" width="648" style="display: block; margin: auto;" /></p>
+</div>
+<div id="confidence-interval" class="section level2">
+<h2>Confidence Interval</h2>
+<p>Boxplots show how the medians of the two distributions compare, but we also want to compare the means and see if there is a statistical difference. First we calculate the 95% confidence interval and then do a hypothesis test to confirm the difference.</p>
+<pre class="r"><code>means_active &lt;- df_active %&gt;%
+  group_by(physical_3plus) %&gt;%
+  summarise(mean_weight = mean(weight, na.rm = TRUE),
+            std_weight = sd(weight, na.rm = TRUE),
+            count = n(), 
+            se = std_weight/sqrt(count),
+            critical_t = qt(0.975, count-1),
+            lower = mean_weight - critical_t * se,
+            upper = mean_weight + critical_t * se)
+
+means_active</code></pre>
+<pre><code>## # A tibble: 2 × 8
+##   physical_3plus mean_weight std_weight count    se critical_t lower upper
+##   &lt;chr&gt;                &lt;dbl&gt;      &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt;      &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1 no                    66.7       17.6  4404 0.266       1.96  66.2  67.2
+## 2 yes                   68.4       16.5  8906 0.175       1.96  68.1  68.8</code></pre>
+<p>There is an observed difference of about 1.77kg (68.44 - 66.67), and we notice that the two confidence intervals do not overlap. It seems that the difference is at least 95% statistically significant. Let us also conduct a hypothesis test.</p>
+</div>
+<div id="hypothesis-test-with-formula" class="section level2">
+<h2>Hypothesis test with formula</h2>
+<p>We are now going to test whether there’s a difference between the mean weights for those who are physically active at least 3x a week and those we don’t. Our null hypothesis is that there is no difference between the means. The alternative hypothesis is that there is a difference. We perform a t-test below to assess these hypotheses.</p>
+<pre class="r"><code>t.test( weight ~ physical_3plus, data = df_active)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  weight by physical_3plus
+## t = -5, df = 7479, p-value = 9e-08
+## alternative hypothesis: true difference in means between group no and group yes is not equal to 0
+## 95 percent confidence interval:
+##  -2.42 -1.12
+## sample estimates:
+##  mean in group no mean in group yes 
+##              66.7              68.4</code></pre>
+<p>According to the t-test, there is a significant difference between the weight of people with 3+ days of phsyical activity and those without. Those who have 3+ days of physical activity have a higher weight.</p>
+<blockquote>
+<p>POINT OF PROGRESS FOR STORYTIME</p>
+</blockquote>
+</div>
+<div id="hypothesis-test-with-infer" class="section level2">
+<h2>Hypothesis test with <code>infer</code></h2>
+<p>Next, we will use the infer package to do a bootstrap simulation of the analysis. This will be used to calculate the difference in means.</p>
+<pre class="r"><code>obs_diff &lt;- df_active %&gt;%
+  specify(weight ~ physical_3plus) %&gt;%
+  calculate(stat = &quot;diff in means&quot;, order = c(&quot;yes&quot;, &quot;no&quot;))</code></pre>
+<pre class="r"><code>null_dist &lt;- df_active %&gt;%
+  # specify variables
+  specify(weight ~ physical_3plus) %&gt;%
+  
+  # assume independence, i.e, there is no difference
+  hypothesize(null = &quot;independence&quot;) %&gt;%
+  
+  # generate 1000 reps, of type &quot;permute&quot;
+  generate(reps = 1000, type = &quot;permute&quot;) %&gt;%
+  
+  # calculate statistic of difference, namely &quot;diff in means&quot;
+  calculate(stat = &quot;diff in means&quot;, order = c(&quot;yes&quot;, &quot;no&quot;))
+
+null_dist</code></pre>
+<pre><code>## Response: weight (numeric)
+## Explanatory: physical_3plus (factor)
+## Null Hypothesis: independence
+## # A tibble: 1,000 × 2
+##    replicate    stat
+##        &lt;int&gt;   &lt;dbl&gt;
+##  1         1  0.305 
+##  2         2  0.0263
+##  3         3  0.580 
+##  4         4 -0.881 
+##  5         5  0.425 
+##  6         6 -0.205 
+##  7         7  0.506 
+##  8         8 -0.0321
+##  9         9  0.208 
+## 10        10 -0.0868
+## # … with 990 more rows</code></pre>
+<pre class="r"><code>visualise(null_dist) </code></pre>
+<p><img src="/blogs/homework3_files/figure-html/hypothesis_testing_using_infer_package-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>We have used <code>hypothesize</code> to set the null hypothesis as a test for independence, i.e. that there is no difference between the two mean Our null hypothesis (that there is no difference between the two means) has been set using the hypothesize function. The alternative hypothesis is that there is a difference in weight between those who exercise three or more days a week and those who don’t.</p>
+<pre class="r"><code>ggplot(data = null_dist, aes(x = stat)) +
+  geom_histogram()</code></pre>
+<p><img src="/blogs/homework3_files/figure-html/unnamed-chunk-3-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>After this visualisation, we need to find the p-value associated with this statistical test to determine whether there is a statistically significant difference.</p>
+<p>See below the visualisation of the p-value on top of the distribution. The p-value is also printed, which is 0 in this case. That means that there is a significant difference between the two means.</p>
+<pre class="r"><code>null_dist %&gt;% visualize() +
+  shade_p_value(obs_stat = obs_diff, direction = &quot;two-sided&quot;)</code></pre>
+<p><img src="/blogs/homework3_files/figure-html/unnamed-chunk-4-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>null_dist %&gt;%
+  get_p_value(obs_stat = obs_diff, direction = &quot;two_sided&quot;)</code></pre>
+<pre><code>## # A tibble: 1 × 1
+##   p_value
+##     &lt;dbl&gt;
+## 1       0</code></pre>
+</div>
+</div>
+<div id="imdb-ratings-differences-between-directors" class="section level1">
+<h1>IMDB ratings: Differences between directors</h1>
+<p>We have a dataset containing a few thousand movies and their IMBD ratings. We want to explore whether movies directed by Steven Spielberg and Tim Burton are rated the same.</p>
+<p>We have loaded the data and shown a glimpse of it below.</p>
+<pre class="r"><code>movies &lt;- read_csv(here::here(&quot;data&quot;, &quot;movies.csv&quot;))
+glimpse(movies)</code></pre>
+<pre><code>## Rows: 2,961
+## Columns: 11
+## $ title               &lt;chr&gt; &quot;Avatar&quot;, &quot;Titanic&quot;, &quot;Jurassic World&quot;, &quot;The Avenge…
+## $ genre               &lt;chr&gt; &quot;Action&quot;, &quot;Drama&quot;, &quot;Action&quot;, &quot;Action&quot;, &quot;Action&quot;, &quot;…
+## $ director            &lt;chr&gt; &quot;James Cameron&quot;, &quot;James Cameron&quot;, &quot;Colin Trevorrow…
+## $ year                &lt;dbl&gt; 2009, 1997, 2015, 2012, 2008, 1999, 1977, 2015, 20…
+## $ duration            &lt;dbl&gt; 178, 194, 124, 173, 152, 136, 125, 141, 164, 93, 1…
+## $ gross               &lt;dbl&gt; 7.61e+08, 6.59e+08, 6.52e+08, 6.23e+08, 5.33e+08, …
+## $ budget              &lt;dbl&gt; 2.37e+08, 2.00e+08, 1.50e+08, 2.20e+08, 1.85e+08, …
+## $ cast_facebook_likes &lt;dbl&gt; 4834, 45223, 8458, 87697, 57802, 37723, 13485, 920…
+## $ votes               &lt;dbl&gt; 886204, 793059, 418214, 995415, 1676169, 534658, 9…
+## $ reviews             &lt;dbl&gt; 3777, 2843, 1934, 2425, 5312, 3917, 1752, 1752, 35…
+## $ rating              &lt;dbl&gt; 7.9, 7.7, 7.0, 8.1, 9.0, 6.5, 8.7, 7.5, 8.5, 7.2, …</code></pre>
+<p>To start assessing this, we create a dataframe with the 95% confidence interval for the mean of the rating for each of the directors, using the t-statistic. Then we plot the confidence intervals on the same graph to see if they overlap a lot.</p>
+<pre class="r"><code>chosen_directors &lt;- c(&#39;Tim Burton&#39;,&#39;Steven Spielberg&#39;)
+
+directors &lt;- movies %&gt;% 
+  filter(director %in% chosen_directors) %&gt;%
+  group_by(director) %&gt;%
+  summarise(mean_rating = mean(rating),
+            sd_rating = sd(rating),
+            count = n(),
+            t_critical = qt(0.975, count-1),
+            se_rating = sd_rating/sqrt(count),
+            margin_of_error = t_critical * se_rating,
+            lower = mean_rating - margin_of_error,
+            upper = mean_rating + margin_of_error) %&gt;%
+  mutate(labels = round(mean_rating, 2))
+
+directors</code></pre>
+<pre><code>## # A tibble: 2 × 10
+##   director      mean_…¹ sd_ra…² count t_cri…³ se_ra…⁴ margi…⁵ lower upper labels
+##   &lt;chr&gt;           &lt;dbl&gt;   &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;
+## 1 Steven Spiel…    7.57   0.695    23    2.07   0.145   0.301  7.27  7.87   7.57
+## 2 Tim Burton       6.93   0.749    16    2.13   0.187   0.399  6.53  7.33   6.93
+## # … with abbreviated variable names ¹​mean_rating, ²​sd_rating, ³​t_critical,
+## #   ⁴​se_rating, ⁵​margin_of_error</code></pre>
+<pre class="r"><code>ggplot(data = directors) +
+  aes(y = director) +
+  geom_errorbarh(aes(xmin = lower, xmax = upper, color = director), size = 2, height = 0.1) +
+  geom_point(aes(x = mean_rating, color = director), size = 5) +
+  geom_rect(aes(xmin = 7.27, xmax = 7.33, ymin=0,ymax=3), fill = &#39;grey70&#39;, alpha=0.5) +
+  geom_text(aes(x = mean_rating, label = labels), vjust = 0, nudge_y = 0.05, overlap=FALSE) +
+  labs(
+    title = &#39;Do Tim Burton and Steven Spielberg have the same mean IMDB rating?&#39;,
+    subtitle = &#39;95% confidence intervals overlap&#39;,
+    x = &#39;Rating&#39;,
+    y = NULL
+  ) +
+  theme_minimal()</code></pre>
+<p><img src="/blogs/homework3_files/figure-html/unnamed-chunk-5-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>Seeing that the two intervals overalp in the grey highlighted area, we need to also conduct a statistical test to see if the means are statistically significantly different. For this, we run a t-test and use the infer package to bootstrap the data as well.</p>
+<p>Our null hypothesis is that the means of the ratings of their films is the same. The alternative hypothesis is that there is a difference between the means of the ratings of Tim Burtons and Steven Spielbergs films. We will be using the t-statistic for the difference between the means. We are looking for a p-value smaller than 0.05 or a t-statistic bigger than 1.75 or smaller than -1.75 (based on df = 15 and p = 0.05). We have chosen the degrees of freedom as the smallest count - 1, which was 16 for Tim Burton.</p>
+<pre class="r"><code>df_directors &lt;- movies  %&gt;%
+  filter(director %in% chosen_directors)
+
+t.test(rating ~ director, data = df_directors)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  rating by director
+## t = 3, df = 31, p-value = 0.01
+## alternative hypothesis: true difference in means between group Steven Spielberg and group Tim Burton is not equal to 0
+## 95 percent confidence interval:
+##  0.16 1.13
+## sample estimates:
+## mean in group Steven Spielberg       mean in group Tim Burton 
+##                           7.57                           6.93</code></pre>
+<pre class="r"><code>directors_infer &lt;- df_directors %&gt;%
+  # specify variables
+  specify(rating ~ director) %&gt;%
+  
+  # assume independence, i.e, there is no difference
+  hypothesize(null = &quot;independence&quot;) %&gt;%
+  
+  # generate 1000 reps, of type &quot;permute&quot;
+  generate(reps = 1000, type = &quot;permute&quot;) %&gt;%
+  
+  # calculate statistic of difference, namely &quot;diff in means&quot;
+  calculate(stat = &quot;diff in means&quot;, order = chosen_directors)
+
+directors_infer %&gt;%
+  get_p_value(obs_stat = obs_diff, direction = &quot;two-sided&quot;)</code></pre>
+<pre><code>## # A tibble: 1 × 1
+##   p_value
+##     &lt;dbl&gt;
+## 1       0</code></pre>
+<p>According to both the t.test and the bootstrapped result, there is a signficant difference in the ratings of the movies of Tim Burton and Steven Spielberg. We see that Tim has a lower mean rating than Steven. The p-value for the t.test was 0.01 and the p-value for infer was 0.</p>
+</div>
+<div id="omega-group-plc--pay-discrimination" class="section level1">
+<h1>Omega Group plc- Pay Discrimination</h1>
+<p>At the last board meeting of Omega Group Plc., the headquarters of a large multinational company, the issue was raised that women were being discriminated in the company, in the sense that the salaries were not the same for male and female executives.</p>
+<p>We were asked to carry out the analysis to find out whether there is a significant difference between the salaries of men and women, and if there are any discrimination factors.</p>
+<div id="loading-the-data" class="section level2">
+<h2>Loading the data</h2>
+<p>Omega Group Plc. had shared data of 50 employees with us. The data was inspected before conducting our analysis and we have noted that there were no missing/incomplete data points.</p>
+<pre class="r"><code>omega &lt;- read_csv(here::here(&quot;data&quot;, &quot;omega.csv&quot;))
+glimpse(omega) # examine the data frame</code></pre>
+<pre><code>## Rows: 50
+## Columns: 3
+## $ salary     &lt;dbl&gt; 81894, 69517, 68589, 74881, 65598, 76840, 78800, 70033, 635…
+## $ gender     &lt;chr&gt; &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;male&quot;, &quot;ma…
+## $ experience &lt;dbl&gt; 16, 25, 15, 33, 16, 19, 32, 34, 1, 44, 7, 14, 33, 19, 24, 3…</code></pre>
+</div>
+<div id="relationship-salary---gender" class="section level2">
+<h2>Relationship Salary - Gender ?</h2>
+<p>The data frame <code>omega</code> contains the salaries for the sample of 50 executives in the company.</p>
+<p>We have constructed a visualization that shows the salary trend between male and female employees:</p>
+<pre class="r"><code>#Extra Visual
+ggplot(omega) + 
+  geom_boxplot() +
+  aes(x = salary, y = gender, colour = gender) + 
+  labs (x = &quot;Salary&quot;, y = &quot;Gender&quot;, caption = &quot;Source: Omega Plc salary data&quot;, title = &quot;Male employees at Omega Plc have a higher salary than females&quot;, subtitle = &quot;Boxplot showing the salary trend between males and females at Omega Plc&quot;)</code></pre>
+<p><img src="/blogs/homework3_files/figure-html/salary_visualisation-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>The above graph shows a visual difference between the average distributions of salary between female and male salary’s for Omega Plc. The group decided to extrapolate the data and construct tables depict these initial findings.</p>
+<pre class="r"><code># Summary Statistics of salary by gender
+mosaic::favstats (salary ~ gender, data=omega)</code></pre>
+<pre><code>##   gender   min    Q1 median    Q3   max  mean   sd  n missing
+## 1 female 47033 60338  64618 70033 78800 64543 7567 26       0
+## 2   male 54768 68331  74675 78568 84576 73239 7463 24       0</code></pre>
+<pre class="r"><code>#Summary Stats 
+
+summary_stats &lt;- omega %&gt;% 
+  group_by(gender) %&gt;% 
+  summarise(mean_salary = mean(salary),
+            sd_salary = sd(salary),
+            count = n(),
+            t_critical = qt(0.975, count-1),
+            se_salary = sd(salary)/sqrt(count),
+            margin_of_error = t_critical * se_salary,
+            salary_low = mean_salary - margin_of_error,
+            salary_high = mean_salary + margin_of_error)
+
+summary_stats</code></pre>
+<pre><code>## # A tibble: 2 × 9
+##   gender mean_salary sd_salary count t_critical se_sal…¹ margi…² salar…³ salar…⁴
+##   &lt;chr&gt;        &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt;      &lt;dbl&gt;    &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+## 1 female      64543.     7567.    26       2.06    1484.   3056.  61486.  67599.
+## 2 male        73239.     7463.    24       2.07    1523.   3151.  70088.  76390.
+## # … with abbreviated variable names ¹​se_salary, ²​margin_of_error, ³​salary_low,
+## #   ⁴​salary_high</code></pre>
+<pre class="r"><code>obs_diff &lt;- omega %&gt;%
+  specify(salary ~ gender) %&gt;%
+  calculate(stat = &quot;diff in means&quot;, order = c(&quot;male&quot;, &quot;female&quot;))
+# Dataframe with two rows (male-female) and having as columns gender, mean, SD, sample size, 
+# the t-critical value, the standard error, the margin of error, 
+# and the low/high endpoints of a 95% condifence interval
+
+p_val &lt;- summary_stats %&gt;%
+  get_p_value(obs_stat = obs_diff, direction = &quot;two_sided&quot;)
+
+p_val</code></pre>
+<pre><code>## # A tibble: 1 × 1
+##   p_value
+##     &lt;dbl&gt;
+## 1       0</code></pre>
+<p>From the initial analysis in the table above, it is shown that males have a higher mean salary of 8696 than females. We decided that more analysis is required to determine if this difference is significant and to decide if there are any further analysis required to uncover influencing factors.</p>
+<div id="advanced-analysis" class="section level3">
+<h3>Advanced Analysis</h3>
+<p>The team decided to conduct 2 tests to decide if the difference in mean salary’s between males and females were significant. The following tests were decided upon:</p>
+<ol style="list-style-type: decimal">
+<li>Hypothesis Tesing useing the T Test package</li>
+<li>T Test using simulation method and infer packages</li>
+</ol>
+<div id="hypothesis-tesing-using-the-t-test-package" class="section level4">
+<h4>Hypothesis Tesing using the T Test package</h4>
+<p>The T Test package was used to assess if there is a true difference in the salaries, and findings form this built-in test shows that there is indeed a significant difference as indicated by the absolute T-Value being greater than 1.96, and the P-Value being smaller than 5%.</p>
+<pre class="r"><code># hypothesis testing using t.test() 
+t.test(salary ~ gender, data = omega)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  salary by gender
+## t = -4, df = 48, p-value = 2e-04
+## alternative hypothesis: true difference in means between group female and group male is not equal to 0
+## 95 percent confidence interval:
+##  -12973  -4420
+## sample estimates:
+## mean in group female   mean in group male 
+##                64543                73239</code></pre>
+<p>We also ran a hypothesis test, assuming that the mean difference in salaries is zero as the null hypothesis using the simulation method from the <code>infer</code> package.</p>
+<pre class="r"><code># hypothesis testing using infer package
+library(infer)
+set.seed(1234)
+infer_stats &lt;- omega %&gt;% 
+  specify(salary ~ gender) %&gt;% 
+  hypothesize(null = &quot;independence&quot;,) %&gt;% 
+  generate(reps = 1000, type =&quot;permute&quot;) %&gt;% 
+  calculate(stat = &quot;diff in means&quot;, order = c(&quot;male&quot;, &quot;female&quot;))
+
+percentile_ci &lt;- infer_stats %&gt;% get_confidence_interval(level = 0.95, type = &quot;percentile&quot;)
+
+visualize(infer_stats) + shade_p_value(obs_stat = obs_diff, direction = &quot;two-sided&quot;)</code></pre>
+<p><img src="/blogs/homework3_files/figure-html/hypothesis_testing_infer-1.png" width="648" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>percentile_ci</code></pre>
+<pre><code>## # A tibble: 1 × 2
+##   lower_ci upper_ci
+##      &lt;dbl&gt;    &lt;dbl&gt;
+## 1   -5025.    4829.</code></pre>
+<p>From both tests conducted, we can conclude that the observed difference in the means of salaries between males and females at Omega Plc is indeed a significant difference.</p>
+<p>As depicted in the simulation density visualisation above, we can see that the observed difference is passed the Upper 95% percentile of 4829. This is confirmed by the t.test() performed that states the absolute T-value as 4, which is much bigger than the standard acceptable value of 1.96. Additionally, the p-value was smaller than 1%.</p>
+</div>
+</div>
+</div>
+<div id="relationship-experience---gender" class="section level2">
+<h2>Relationship Experience - Gender?</h2>
+<p>At the board meeting, someone raised the issue that there was indeed a substantial difference between male and female salaries, but that this was attributable to other reasons such as differences in experience. A questionnaire send out to the 50 executives in the sample reveals that the average experience of the men is approximately 21 years, whereas the women only have about 7 years experience on average (see table below).</p>
+<pre class="r"><code># Summary Statistics of experience by gender
+favstats (experience ~ gender, data=omega)</code></pre>
+<pre><code>##   gender min    Q1 median   Q3 max  mean    sd  n missing
+## 1 female   0  0.25    3.0 14.0  29  7.38  8.51 26       0
+## 2   male   1 15.75   19.5 31.2  44 21.12 10.92 24       0</code></pre>
+<pre class="r"><code>#Summary Stats
+summary_stats_exp &lt;- omega %&gt;% 
+  group_by(gender) %&gt;% 
+  summarise(mean_experience = mean(experience),
+            sd_experience = sd(experience),
+            count = n(),
+            t_critical = qt(0.975, count-1),
+            se_experience = sd(experience)/sqrt(count),
+            margin_of_error = t_critical * se_experience,
+            experience_low = mean_experience - margin_of_error,
+            experience_high = mean_experience + margin_of_error)
+
+summary_stats_exp</code></pre>
+<pre><code>## # A tibble: 2 × 9
+##   gender mean_experience sd_expe…¹ count t_cri…² se_ex…³ margi…⁴ exper…⁵ exper…⁶
+##   &lt;chr&gt;            &lt;dbl&gt;     &lt;dbl&gt; &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+## 1 female            7.38      8.51    26    2.06    1.67    3.44    3.95    10.8
+## 2 male             21.1      10.9     24    2.07    2.23    4.61   16.5     25.7
+## # … with abbreviated variable names ¹​sd_experience, ²​t_critical,
+## #   ³​se_experience, ⁴​margin_of_error, ⁵​experience_low, ⁶​experience_high</code></pre>
+<p>The above data shows a difference in experience mean of 13.74 years between females and males. To establish if the observation is a significant difference, further analysis is required.</p>
+<pre class="r"><code>t.test(experience ~ gender, data = omega)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  experience by gender
+## t = -5, df = 43, p-value = 1e-05
+## alternative hypothesis: true difference in means between group female and group male is not equal to 0
+## 95 percent confidence interval:
+##  -19.35  -8.13
+## sample estimates:
+## mean in group female   mean in group male 
+##                 7.38                21.12</code></pre>
+<p>Further analysis was conducted in the form of a T Test to assess the if there is any significant differences in experience between genders. The following test show the statistical variables for Omega Plc.The findings show that there is a significant difference in the experience between males and females from Omega Plc, shown by the observed t-value is greater than 1.96 and a small p-value. This finding assists in validating the pervious observation - as the average experience of males suggests reason as to why the salaries of genders are different.</p>
+<p>Based on this evidence, can you conclude that there is a significant difference between the experience of the male and female executives? Perform similar analyses as in the previous section. Does your conclusion validate or endanger your conclusion about the difference in male and female salaries?</p>
+</div>
+<div id="relationship-salary---experience" class="section level2">
+<h2>Relationship Salary - Experience ?</h2>
+<p>To further substantiate the findings from the previous tests conducted, a final visual check is performed to determine if there have been any discrimination against females at Omega Plc.</p>
+<pre class="r"><code>ggplot(omega)+
+  aes(x = experience, y = salary, color = gender)+
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;) +
+  labs(x = &quot;Experience&quot;, y = &quot;Salary&quot;, title = &quot;Female&#39;s yearly increases are greater than that of men&quot;, subtitle = &quot;Scatterplot showing the distribution of salary versus experience for males and females.&quot;)</code></pre>
+<p><img src="/blogs/homework3_files/figure-html/salary_exp_scatter-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>The plot shows that there are a greater proportion of female employees at Omega Plc with less than 10 years of experience as compared to males, while there is a greater proportion of males with more than 10 years of experience than females at the company</p>
+</div>
+<div id="correlation-checks-between-gender-experience-and-salary" class="section level2">
+<h2>Correlation checks between gender, experience, and salary</h2>
+<p>The following graph shows a visual matrix of how gender and experience affect salary.</p>
+<pre class="r"><code>omega %&gt;% 
+  select(gender, experience, salary) %&gt;% #order variables they will appear in ggpairs()
+  ggpairs(aes(colour=gender, alpha = 0.3))+
+  theme_bw()</code></pre>
+<p><img src="/blogs/homework3_files/figure-html/ggpairs-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>The visual assessing salary and experience for various genders shows the same finding as described in the visual before.</p>
+</div>
+</div>
+<div id="challenge-1-brexit-plot" class="section level1">
+<h1>Challenge 1: Brexit plot</h1>
+<p>Recreating the Brexit Plot.</p>
+<pre class="r"><code>knitr::include_graphics(here::here(&quot;images&quot;, &quot;brexit.png&quot;), error = FALSE)</code></pre>
+<p><img src="../../images/brexit.png" width="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code># read data directly off github repo
+brexit_results &lt;- read_csv(&quot;https://raw.githubusercontent.com/kostis-christodoulou/am01/master/data/brexit_results.csv&quot;)
+
+filtered_brexit_data &lt;- brexit_results %&gt;%  
+  select(leave_share, con_2015, lab_2015, ld_2015, ukip_2015) %&gt;% 
+  pivot_longer(cols = 2:5, names_to = &quot;party&quot;, values_to = &quot;percentage&quot;) # pivoting the data before preparing the plot
+
+#filtered_brexit_data
+
+ggplot(filtered_brexit_data) + 
+  aes(x = percentage, y = leave_share, colour = party) + 
+  geom_point(alpha = 0.35) + 
+  geom_smooth(method = &quot;lm&quot;) +
+  scale_color_manual(breaks = c(&quot;con_2015&quot;, &quot;lab_2015&quot;, &quot;ld_2015&quot;, &quot;ukip_2015&quot;), values=c(&quot;#0087DC&quot;, &quot;#E4003B&quot;, &quot;#FAA61A&quot;, &quot;#FFD700&quot;), labels=c(&#39;Conservative&#39;, &#39;Labour&#39;, &#39;Lib Dems&#39;, &#39;UKIP&#39;)) +
+  labs(x = &quot;Party % in the UK 2015 general election&quot;, y = &quot;Party % in the 2016 Brexit referendum&quot;, title = &quot;How political affiliation translated to Brexit Voting&quot;) +
+ theme_bw() +
+  theme(legend.position = &quot;bottom&quot;, legend.title = element_blank())</code></pre>
+<p><img src="/blogs/homework3_files/figure-html/brexit_challenge-2.png" width="100%" style="display: block; margin: auto;" /></p>
+<pre class="r"><code>#+ theme(aspect.ratio = 1)</code></pre>
+</div>
+<div id="challenge-2gdp-components-over-time-and-among-countries" class="section level1">
+<h1>Challenge 2:GDP components over time and among countries</h1>
+<p>We have data from the UN on the GDP among many different countries between 1970 and 2022. We want to test whether the economic definition of GDP is correct in reality. In economics, GDP is the sum of consumption, investment, government spending and net exports. We will be analysing whether that is true for India, the US and Germany.</p>
+<p>Below we download and glimpse the data</p>
+<pre class="r"><code>UN_GDP_data  &lt;-  read_excel(here::here(&quot;data&quot;, &quot;Download-GDPconstant-USD-countries.xls&quot;), # Excel filename
+                sheet=&quot;Download-GDPconstant-USD-countr&quot;, # Sheet name
+                skip=2) # Number of rows to skip
+
+glimpse(UN_GDP_data)</code></pre>
+<pre><code>## Rows: 3,685
+## Columns: 51
+## $ CountryID     &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 8, 8, 8,…
+## $ Country       &lt;chr&gt; &quot;Afghanistan&quot;, &quot;Afghanistan&quot;, &quot;Afghanistan&quot;, &quot;Afghanista…
+## $ IndicatorName &lt;chr&gt; &quot;Final consumption expenditure&quot;, &quot;Household consumption …
+## $ `1970`        &lt;dbl&gt; 5.56e+09, 5.07e+09, 3.72e+08, 9.85e+08, 9.85e+08, 1.12e+…
+## $ `1971`        &lt;dbl&gt; 5.33e+09, 4.84e+09, 3.82e+08, 1.05e+09, 1.05e+09, 1.45e+…
+## $ `1972`        &lt;dbl&gt; 5.20e+09, 4.70e+09, 4.02e+08, 9.19e+08, 9.19e+08, 1.73e+…
+## $ `1973`        &lt;dbl&gt; 5.75e+09, 5.21e+09, 4.21e+08, 9.19e+08, 9.19e+08, 2.18e+…
+## $ `1974`        &lt;dbl&gt; 6.15e+09, 5.59e+09, 4.31e+08, 1.18e+09, 1.18e+09, 3.00e+…
+## $ `1975`        &lt;dbl&gt; 6.32e+09, 5.65e+09, 5.98e+08, 1.37e+09, 1.37e+09, 3.16e+…
+## $ `1976`        &lt;dbl&gt; 6.37e+09, 5.68e+09, 6.27e+08, 2.03e+09, 2.03e+09, 4.17e+…
+## $ `1977`        &lt;dbl&gt; 6.90e+09, 6.15e+09, 6.76e+08, 1.92e+09, 1.92e+09, 4.31e+…
+## $ `1978`        &lt;dbl&gt; 7.09e+09, 6.30e+09, 7.25e+08, 2.22e+09, 2.22e+09, 4.57e+…
+## $ `1979`        &lt;dbl&gt; 6.92e+09, 6.15e+09, 7.08e+08, 2.07e+09, 2.07e+09, 4.89e+…
+## $ `1980`        &lt;dbl&gt; 6.69e+09, 5.95e+09, 6.85e+08, 1.98e+09, 1.98e+09, 4.53e+…
+## $ `1981`        &lt;dbl&gt; 6.81e+09, 6.06e+09, 6.97e+08, 2.06e+09, 2.06e+09, 4.60e+…
+## $ `1982`        &lt;dbl&gt; 6.96e+09, 6.19e+09, 7.12e+08, 2.08e+09, 2.08e+09, 4.77e+…
+## $ `1983`        &lt;dbl&gt; 7.30e+09, 6.49e+09, 7.47e+08, 2.19e+09, 2.19e+09, 4.96e+…
+## $ `1984`        &lt;dbl&gt; 7.43e+09, 6.61e+09, 7.60e+08, 2.23e+09, 2.23e+09, 5.06e+…
+## $ `1985`        &lt;dbl&gt; 7.45e+09, 6.63e+09, 7.63e+08, 2.23e+09, 2.23e+09, 5.08e+…
+## $ `1986`        &lt;dbl&gt; 7.68e+09, 6.83e+09, 7.85e+08, 2.30e+09, 2.30e+09, 5.23e+…
+## $ `1987`        &lt;dbl&gt; 6.89e+09, 6.12e+09, 7.05e+08, 2.07e+09, 2.07e+09, 4.69e+…
+## $ `1988`        &lt;dbl&gt; 6.32e+09, 5.62e+09, 6.46e+08, 1.90e+09, 1.90e+09, 4.31e+…
+## $ `1989`        &lt;dbl&gt; 5.87e+09, 5.22e+09, 6.01e+08, 1.76e+09, 1.76e+09, 4.00e+…
+## $ `1990`        &lt;dbl&gt; 5.69e+09, 5.06e+09, 5.82e+08, 1.71e+09, 1.71e+09, 3.88e+…
+## $ `1991`        &lt;dbl&gt; 5.28e+09, 4.70e+09, 5.40e+08, 1.51e+09, 1.51e+09, 4.15e+…
+## $ `1992`        &lt;dbl&gt; 5.59e+09, 4.97e+09, 5.72e+08, 1.52e+09, 1.52e+09, 4.92e+…
+## $ `1993`        &lt;dbl&gt; 4.36e+09, 3.87e+09, 4.46e+08, 1.13e+09, 1.13e+09, 4.22e+…
+## $ `1994`        &lt;dbl&gt; 3.52e+09, 3.13e+09, 3.59e+08, 8.70e+08, 8.70e+08, 3.69e+…
+## $ `1995`        &lt;dbl&gt; 5.46e+09, 4.86e+09, 5.60e+08, 1.29e+09, 1.29e+09, 6.16e+…
+## $ `1996`        &lt;dbl&gt; 5.36e+09, 4.76e+09, 5.48e+08, 1.21e+09, 1.21e+09, 6.42e+…
+## $ `1997`        &lt;dbl&gt; 5.25e+09, 4.67e+09, 5.36e+08, 1.14e+09, 1.14e+09, 6.64e+…
+## $ `1998`        &lt;dbl&gt; 5.18e+09, 4.60e+09, 5.33e+08, 1.08e+09, 1.08e+09, 6.87e+…
+## $ `1999`        &lt;dbl&gt; 5.09e+09, 4.52e+09, 5.17e+08, 1.02e+09, 1.02e+09, 7.04e+…
+## $ `2000`        &lt;dbl&gt; 4.95e+09, 4.41e+09, 5.04e+08, 9.53e+08, 9.53e+08, 7.13e+…
+## $ `2001`        &lt;dbl&gt; 4.70e+09, 4.17e+09, 4.95e+08, 1.00e+09, 1.00e+09, 6.54e+…
+## $ `2002`        &lt;dbl&gt; 7.18e+09, 6.40e+09, 7.02e+08, 1.37e+09, 1.37e+09, 9.49e+…
+## $ `2003`        &lt;dbl&gt; 8.87e+09, 7.89e+09, 9.06e+08, 1.54e+09, 1.54e+09, 1.41e+…
+## $ `2004`        &lt;dbl&gt; 8.73e+09, 7.66e+09, 1.05e+09, 1.90e+09, 1.90e+09, 1.11e+…
+## $ `2005`        &lt;dbl&gt; 1.01e+10, 9.00e+09, 1.06e+09, 2.06e+09, 2.06e+09, 1.14e+…
+## $ `2006`        &lt;dbl&gt; 1.07e+10, 9.34e+09, 1.40e+09, 2.06e+09, 2.06e+09, 1.09e+…
+## $ `2007`        &lt;dbl&gt; 1.20e+10, 1.04e+10, 1.71e+09, 2.17e+09, 2.17e+09, 1.03e+…
+## $ `2008`        &lt;dbl&gt; 1.23e+10, 1.06e+10, 1.73e+09, 2.14e+09, 2.14e+09, 1.24e+…
+## $ `2009`        &lt;dbl&gt; 1.29e+10, 1.10e+10, 2.15e+09, 3.12e+09, 3.12e+09, 1.53e+…
+## $ `2010`        &lt;dbl&gt; 1.79e+10, 1.57e+10, 2.25e+09, 2.81e+09, 2.81e+09, 1.58e+…
+## $ `2011`        &lt;dbl&gt; 1.97e+10, 1.70e+10, 2.69e+09, 2.61e+09, 2.61e+09, 1.72e+…
+## $ `2012`        &lt;dbl&gt; 2.91e+10, 2.59e+10, 2.81e+09, 2.85e+09, 2.85e+09, 1.31e+…
+## $ `2013`        &lt;dbl&gt; 3.48e+10, 3.14e+10, 2.81e+09, 2.75e+09, 2.75e+09, 8.34e+…
+## $ `2014`        &lt;dbl&gt; 3.35e+10, 3.02e+10, 2.76e+09, 2.13e+09, 2.13e+09, 1.20e+…
+## $ `2015`        &lt;dbl&gt; 3.53e+10, 3.19e+10, 2.81e+09, 2.29e+09, 2.29e+09, 9.10e+…
+## $ `2016`        &lt;dbl&gt; 3.50e+10, 3.16e+10, 2.84e+09, 2.34e+09, 2.34e+09, 7.54e+…
+## $ `2017`        &lt;dbl&gt; 3.51e+10, 3.16e+10, 2.85e+09, 2.24e+09, 2.24e+09, 7.60e+…</code></pre>
+<p>We tidy the data to make sure it’s in a long format. We also change the indicator names to be more concise, which helps legibility of the graph legend later. We then plot the data to show the GDP and it’s components over time.</p>
+<pre class="r"><code>tidy_GDP_data  &lt;- UN_GDP_data %&gt;% 
+  
+  pivot_longer(cols=4:51, 
+                names_to=&quot;year&quot;, 
+                values_to = &quot;GDP&quot;) %&gt;% 
+   mutate(GDP_new = GDP/1e9,
+          tidy_IndicatorName = case_when(
+     IndicatorName == &#39;Imports of goods and services&#39; ~ &quot;Imports&quot;,
+     IndicatorName == &#39;Household consumption expenditure (including Non-profit institutions serving households)&#39; ~ &quot;Household expenditure&quot;,
+     IndicatorName == &quot;General government final consumption expenditure&quot; ~ &quot;Government expenditure&quot;,
+     IndicatorName == &quot;Final consumption expenditure&quot;~ &quot;Final consumption expenditure&quot;,
+     IndicatorName == &quot;Gross capital formation&quot; ~ &quot;Gross capital formation&quot;,
+     IndicatorName == &quot;Exports of goods and services&quot; ~ &quot;Exports&quot;,
+     IndicatorName == &quot;Gross Domestic Product (GDP)&quot; ~ &quot;Gross Domestic Product&quot;,
+    )) %&gt;%
+  drop_na() 
+
+glimpse(tidy_GDP_data)</code></pre>
+<pre><code>## Rows: 67,441
+## Columns: 7
+## $ CountryID          &lt;dbl&gt; 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, …
+## $ Country            &lt;chr&gt; &quot;Afghanistan&quot;, &quot;Afghanistan&quot;, &quot;Afghanistan&quot;, &quot;Afgha…
+## $ IndicatorName      &lt;chr&gt; &quot;Final consumption expenditure&quot;, &quot;Final consumption…
+## $ year               &lt;chr&gt; &quot;1970&quot;, &quot;1971&quot;, &quot;1972&quot;, &quot;1973&quot;, &quot;1974&quot;, &quot;1975&quot;, &quot;19…
+## $ GDP                &lt;dbl&gt; 5.56e+09, 5.33e+09, 5.20e+09, 5.75e+09, 6.15e+09, 6…
+## $ GDP_new            &lt;dbl&gt; 5.56, 5.33, 5.20, 5.75, 6.15, 6.32, 6.37, 6.90, 7.0…
+## $ tidy_IndicatorName &lt;chr&gt; &quot;Final consumption expenditure&quot;, &quot;Final consumption…</code></pre>
+<pre class="r"><code># Let us compare GDP components for these 3 countries
+country_list &lt;- c(&quot;United States&quot;,&quot;India&quot;, &quot;Germany&quot;)
+Indicator_list &lt;- c(&#39;Gross capital formation&#39;, &quot;Exports of goods and services&quot;, &quot;General government final consumption expenditure&quot;, &quot;Household consumption expenditure (including Non-profit institutions serving households)&quot;, &quot;Imports of goods and services&quot;
+)
+tidy_GDP_data_countrywise &lt;- tidy_GDP_data %&gt;%
+  
+#  
+  filter(Country %in% country_list, IndicatorName %in% Indicator_list) %&gt;% 
+  
+  group_by(Country) %&gt;% 
+   mutate(year = as.integer(year))
+  
+tidy_GDP_data_countrywise</code></pre>
+<pre><code>## # A tibble: 720 × 7
+## # Groups:   Country [3]
+##    CountryID Country IndicatorName                  year     GDP GDP_new tidy_…¹
+##        &lt;dbl&gt; &lt;chr&gt;   &lt;chr&gt;                         &lt;int&gt;   &lt;dbl&gt;   &lt;dbl&gt; &lt;chr&gt;  
+##  1       276 Germany Household consumption expend…  1970 8.72e11    872. Househ…
+##  2       276 Germany Household consumption expend…  1971 9.19e11    919. Househ…
+##  3       276 Germany Household consumption expend…  1972 9.69e11    969. Househ…
+##  4       276 Germany Household consumption expend…  1973 9.97e11    997. Househ…
+##  5       276 Germany Household consumption expend…  1974 9.95e11    995. Househ…
+##  6       276 Germany Household consumption expend…  1975 1.03e12   1032. Househ…
+##  7       276 Germany Household consumption expend…  1976 1.08e12   1076. Househ…
+##  8       276 Germany Household consumption expend…  1977 1.12e12   1122. Househ…
+##  9       276 Germany Household consumption expend…  1978 1.16e12   1162. Househ…
+## 10       276 Germany Household consumption expend…  1979 1.20e12   1200. Househ…
+## # … with 710 more rows, and abbreviated variable name ¹​tidy_IndicatorName</code></pre>
+<pre class="r"><code>ggplot(tidy_GDP_data_countrywise)+
+  aes(x = year, y = GDP_new, color = tidy_IndicatorName)+
+  geom_line()+
+  facet_wrap(~Country)+
+  labs(
+    title = &#39;GDP components over time&#39;,
+    subtitle = &#39;In constant 2010 USD&#39;,
+    
+  )+
+  ylab(&#39;Billion US$&#39;)+
+  xlab(&#39;Year&#39;)+
+  theme_bw()</code></pre>
+<p><img src="/blogs/homework3_files/figure-html/reshape_GDP_data-1.png" width="648" style="display: block; margin: auto;" /></p>
+<p>We now start testing whether the GDP from the sum of the components is the same as the GDP in reality. Below we calculate the percentage difference between reality and theory.</p>
+<p><img src="../../images/gdp1.png" width="100%" style="display: block; margin: auto;" /></p>
+<pre><code>##         Country total_gdp_by_components total_gdp percentage_difference
+## 1       Germany                   67598     43904                  35.1
+## 2         India                   18523     13643                  26.3
+## 3 United States                  203255    162771                  19.9</code></pre>
+<p>There is a percentage difference of 35.1% for Germany, 26.3% for India and 19.9% for United States</p>
+<p><img src="../../images/gdp2.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>In Germany we can see a downward trend in household expenditure and gross capital formation. The net exports have increased starting 2020 and government expenditure has almost remained the same with slight changes in the middle. In India household expenditure has decreased drasitically, by more than 10%. On the oppostie, gross capital formation has seen rapid increase specially after the year 2000. Net exports and Government expenditure have stayed the same over the years. In the United states, Government expenditure has seen the most change, it has decreased by more than 5%. Net exports have reduced by about 1-2%, while both gross capital formation household expenditure have increased by approximately 2.5%. India has the highest levels of gross capital formation and the lowest government expenditure.</p>
+</div>
+<div id="details" class="section level1">
+<h1>Details</h1>
+<ul>
+<li>Who did you collaborate with: Samarth Sharma, Vivian van Oosten, Anastasia Fu, Jaelyn Shi, Andrew Robak, Shivant Maharaj</li>
+<li>Approximately how much time did you spend on this problem set: 12 hours</li>
+<li>What, if anything, gave you the most trouble: -</li>
+</ul>
+</div>
